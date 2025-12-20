@@ -1,100 +1,372 @@
-const API_BASE_URL = 'http://localhost:3001/api';
-
-let map;
-let markers = [];
+// Global state
 let allStations = [];
+let map = null;
+let markers = [];
 
 // Initialize map
 function initMap() {
-  map = L.map('map').setView([34.5, -105.5], 6); // Center on NM/CO/TX region
+  // Center on Texas/NM/CO region
+  map = L.map('map').setView([33.5, -103], 6);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
-    maxZoom: 19
+    maxZoom: 18
   }).addTo(map);
 }
 
 // Create custom marker icon
-function createMarkerIcon(color = '#e82127') {
+function createMarkerIcon(station) {
+  let className = 'custom-marker';
+  let icon = '⚡';
+
+  // Determine type and icon
+  if (station.chargerType === 'nacs') {
+    className += ' marker-nacs';
+    icon = '🟣';
+  } else if (station.chargerType === 'party') {
+    className += ' marker-party';
+    icon = '🟠';
+  }
+
+  // Show fast charging
+  if (station.maxPowerKw >= 250) {
+    icon = '⚡';
+  }
+
+  const iconHtml = `<div class="${className}">${icon}</div>`;
+
   return L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="
-      background: ${color};
-      width: 28px;
-      height: 28px;
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      border: 3px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      position: relative;
-    ">
-      <div style="
-        position: absolute;
-        width: 8px;
-        height: 8px;
-        background: white;
-        border-radius: 50%;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      "></div>
-    </div>`,
-    iconSize: [28, 28],
-    iconAnchor: [14, 28]
+    html: iconHtml,
+    className: '',
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
+    popupAnchor: [0, -18]
   });
 }
 
-// Format tooltip content
-function formatTooltip(station) {
-  const vehicleTypes = [];
-  if (station.tesla_compatible) vehicleTypes.push('Tesla');
-  if (station.nacs_partner) vehicleTypes.push('NACS Partner');
-  if (station.other_ev) vehicleTypes.push('Other EV');
+// Create pricing table (Tesla's horizontal design)
+function createPricingTable(pricing) {
+  const tesla = pricing.tesla || [];
+  const nonTesla = pricing.nonTesla || [];
 
-  let priceInfo = 'Price not available';
+  if (tesla.length === 0 && nonTesla.length === 0) {
+    return '<div class="congestion-fee">⚠️ Pricing information not available</div>';
+  }
 
-  // Check if we have pricing tiers
-  if (station.pricing_tiers && station.pricing_tiers.length > 0) {
-    priceInfo = '<div class="pricing-tiers">';
-    station.pricing_tiers.forEach(tier => {
-      priceInfo += `
-        <div class="tier-row">
-          <span class="tier-time">${tier.startTime} - ${tier.endTime}</span>
-          <span class="tier-price">$${tier.rate.toFixed(3)}/kWh</span>
-          <span class="tier-label">${tier.label}</span>
+  // Find min/max to determine peak/off-peak
+  const allRates = [...tesla, ...nonTesla].map(t => t.rate);
+  const minRate = Math.min(...allRates);
+  const maxRate = Math.max(...allRates);
+
+  function createPriceRow(tiers, label, colorClass) {
+    if (tiers.length === 0) return '';
+
+    const cells = tiers.map(tier => {
+      const isPeak = tier.rate >= (minRate + maxRate) / 2;
+      return `
+        <div class="price-cell ${isPeak ? 'peak' : 'off-peak'}">
+          <div class="price-tooltip">${tier.startTime}-${tier.endTime}</div>
+          $${tier.rate.toFixed(2)}
         </div>
       `;
-    });
-    priceInfo += '</div>';
-  } else if (station.usd_per_kwh) {
-    priceInfo = `$${station.usd_per_kwh.toFixed(3)}/kWh`;
-  } else if (station.peak_rate && station.off_peak_rate) {
-    priceInfo = `Peak: $${station.peak_rate.toFixed(3)}/kWh<br>Off-Peak: $${station.off_peak_rate.toFixed(3)}/kWh`;
-    if (station.peak_hours) {
-      priceInfo += `<br><small>Peak hours: ${station.peak_hours}</small>`;
-    }
+    }).join('');
+
+    return `
+      <div class="pricing-row">
+        <div class="pricing-row-label ${colorClass}">${label}</div>
+        ${cells}
+      </div>
+    `;
   }
 
   return `
-    <div class="station-tooltip">
-      <div class="name">${station.name}</div>
-      <div class="address">
-        ${station.address_line1 || ''}<br>
-        ${station.city}, ${station.state} ${station.zip}
+    <div class="pricing-table">
+      ${createPriceRow(tesla, 'TESLA', 'tesla')}
+      ${createPriceRow(nonTesla, 'NON-TESLA', 'non-tesla')}
+    </div>
+  `;
+}
+
+// Create unified congestion chart with pricing partitions
+function createCongestionChart(congestionData, pricing) {
+  if (!congestionData || congestionData.length === 0) {
+    return '';
+  }
+
+  // Rotate data to start at 4am
+  const rotatedCongestionData = [...congestionData.slice(4), ...congestionData.slice(0, 4)];
+
+  const now = new Date().getHours();
+  // Adjust current hour for 4am start
+  const adjustedCurrentHour = now >= 4 ? now - 4 : now + 20;
+
+  const tesla = pricing.tesla || [];
+  const nonTesla = pricing.nonTesla || [];
+
+  // Build hourly pricing map (original hours, not rotated yet)
+  const hourlyPricing = new Array(24).fill(null);
+  tesla.forEach(tier => {
+    let startHour = parseInt(tier.startTime.split(':')[0]);
+    let endHour = parseInt(tier.endTime.split(':')[0]);
+    if (endHour === 0) endHour = 24;
+    for (let hour = startHour; hour < endHour; hour++) {
+      hourlyPricing[hour] = tier.rate;
+    }
+  });
+
+  // Rotate pricing to start at 4am
+  const rotatedHourlyPricing = [...hourlyPricing.slice(4), ...hourlyPricing.slice(0, 4)];
+
+  // Determine min/max for color coding
+  const validPrices = hourlyPricing.filter(p => p !== null);
+  const minPrice = Math.min(...validPrices);
+  const maxPrice = Math.max(...validPrices);
+  const midPrice = (minPrice + maxPrice) / 2;
+
+  // Create price labels row (Tesla) - adjusted for 4am start
+  let teslaPriceLabels = '';
+  let nonTeslaPriceLabels = '';
+
+  // Group consecutive hours with same price
+  const teslaPriceGroups = [];
+  let currentGroup = null;
+
+  for (let i = 0; i < 24; i++) {
+    const price = rotatedHourlyPricing[i];
+    if (currentGroup && currentGroup.price === price) {
+      currentGroup.count++;
+    } else {
+      if (currentGroup) teslaPriceGroups.push(currentGroup);
+      currentGroup = { price, count: 1 };
+    }
+  }
+  if (currentGroup) teslaPriceGroups.push(currentGroup);
+
+  teslaPriceGroups.forEach((group, index) => {
+    if (group.price === null) return; // Skip null prices
+
+    const widthPercent = (group.count / 24) * 100;
+    const isPeak = group.price >= midPrice;
+    const bgColor = isPeak ? '#e8e8e8' : '#f5f5f5';
+    const borderRight = index < teslaPriceGroups.length - 1 ? 'border-right: 2px solid #fff;' : '';
+
+    teslaPriceLabels += `
+      <div style="flex: 0 0 ${widthPercent}%; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: ${bgColor}; padding: 8px 4px; ${borderRight}">
+        $${group.price.toFixed(2)}
       </div>
-      <div class="info-row">
-        <span class="info-label">Stalls:</span>
-        <span class="info-value">${station.total_stalls || 'N/A'}</span>
+    `;
+  });
+
+  // Create price labels row (Non-Tesla) - adjusted for 4am start
+  // Build hourly pricing map for non-Tesla
+  const hourlyPricingNonTesla = new Array(24).fill(null);
+  nonTesla.forEach(tier => {
+    let startHour = parseInt(tier.startTime.split(':')[0]);
+    let endHour = parseInt(tier.endTime.split(':')[0]);
+    if (endHour === 0) endHour = 24;
+    for (let hour = startHour; hour < endHour; hour++) {
+      hourlyPricingNonTesla[hour] = tier.rate;
+    }
+  });
+
+  // Rotate non-Tesla pricing to start at 4am
+  const rotatedHourlyPricingNonTesla = [...hourlyPricingNonTesla.slice(4), ...hourlyPricingNonTesla.slice(0, 4)];
+
+  // Determine min/max for non-Tesla
+  const nonTeslaPrices = nonTesla.map(t => t.rate);
+  const minNonTesla = nonTeslaPrices.length > 0 ? Math.min(...nonTeslaPrices) : 0;
+  const maxNonTesla = nonTeslaPrices.length > 0 ? Math.max(...nonTeslaPrices) : 0;
+  const midNonTesla = (minNonTesla + maxNonTesla) / 2;
+
+  // Group consecutive hours with same price for non-Tesla
+  const nonTeslaPriceGroups = [];
+  let currentNonTeslaGroup = null;
+
+  for (let i = 0; i < 24; i++) {
+    const price = rotatedHourlyPricingNonTesla[i];
+    if (currentNonTeslaGroup && currentNonTeslaGroup.price === price) {
+      currentNonTeslaGroup.count++;
+    } else {
+      if (currentNonTeslaGroup) nonTeslaPriceGroups.push(currentNonTeslaGroup);
+      currentNonTeslaGroup = { price, count: 1 };
+    }
+  }
+  if (currentNonTeslaGroup) nonTeslaPriceGroups.push(currentNonTeslaGroup);
+
+  nonTeslaPriceGroups.forEach((group, index) => {
+    if (group.price === null) return; // Skip null prices
+
+    const widthPercent = (group.count / 24) * 100;
+    const isPeak = group.price >= midNonTesla;
+    const bgColor = isPeak ? '#e8e8e8' : '#f5f5f5';
+    const borderRight = index < nonTeslaPriceGroups.length - 1 ? 'border-right: 2px solid #fff;' : '';
+
+    nonTeslaPriceLabels += `
+      <div style="flex: 0 0 ${widthPercent}%; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: ${bgColor}; padding: 8px 4px; ${borderRight}">
+        $${group.price.toFixed(2)}
       </div>
-      <div class="info-section">
-        <div class="info-label">Pricing:</div>
-        <div class="info-value price">${priceInfo}</div>
+    `;
+  });
+
+  // Create background partitions for pricing windows
+  let backgroundHtml = '';
+
+  // Filter out null groups first to get proper indexing for margins
+  const validTeslaPriceGroups = teslaPriceGroups.filter(g => g.price !== null);
+  const numPartitions = validTeslaPriceGroups.length;
+  const gapSize = 2; // 2px gap between partitions
+  const totalGaps = (numPartitions - 1) * gapSize; // Total gap width in px
+
+  validTeslaPriceGroups.forEach((group, index) => {
+    const widthPercent = (group.count / 24) * 100;
+    const isPeak = group.price >= midPrice;
+    const bgColor = isPeak ? 'rgba(139, 92, 246, 0.08)' : 'rgba(196, 181, 253, 0.08)';
+    const marginRight = index < numPartitions - 1 ? `${gapSize}px` : '0';
+
+    // Adjust width to account for gaps: each partition loses its proportional share of total gap space
+    const gapAdjustment = (totalGaps / numPartitions);
+
+    backgroundHtml += `
+      <div style="flex: 0 0 calc(${widthPercent}% - ${gapAdjustment}px); background: ${bgColor}; margin-right: ${marginRight};"></div>
+    `;
+  });
+
+  // Create bars (rotated to start at 4am)
+  let barsHtml = '';
+  for (let displayHour = 0; displayHour < 24; displayHour++) {
+    const congestion = rotatedCongestionData[displayHour] || 0;
+    // Congestion is already 0.0-1.0 (0%-100%), so multiply by 100 for height percentage
+    const heightPercent = congestion * 100;
+    const isCurrentHour = displayHour === adjustedCurrentHour;
+
+    // Determine color based on pricing tier
+    const price = rotatedHourlyPricing[displayHour];
+    let barColor = '#a78bfa';
+    if (price !== null) {
+      barColor = price >= midPrice ? '#8b5cf6' : '#c4b5fd';
+    }
+
+    // Calculate actual hour for display (4am = hour 4, 5am = hour 5, etc.)
+    const actualHour = (displayHour + 4) % 24;
+
+    barsHtml += `
+      <div class="chart-bar ${isCurrentHour ? 'current' : ''}"
+           style="height: ${heightPercent}%; background: ${barColor};"
+           title="${actualHour}:00 - ${(congestion * 100).toFixed(0)}% busy">
+        <div class="chart-bar-label">${actualHour}</div>
       </div>
-      ${vehicleTypes.length > 0 ? `
-        <div class="vehicle-types">
-          ${vehicleTypes.map(type => `<span class="vehicle-badge">${type}</span>`).join('')}
+    `;
+  }
+
+  return `
+    <div class="congestion-chart">
+      ${tesla.length > 0 ? `
+        <div class="chart-title" style="color: #e31937; margin-bottom: 4px;">🔴 TESLA HOURLY PRICING</div>
+        <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          ${teslaPriceLabels}
         </div>
       ` : ''}
+
+      ${nonTesla.length > 0 ? `
+        <div class="chart-title" style="color: #5856d6; margin-top: ${tesla.length > 0 ? '8px' : '0'}; margin-bottom: 4px;">🟣 NON-TESLA HOURLY PRICING</div>
+        <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          ${nonTeslaPriceLabels}
+        </div>
+      ` : ''}
+
+      <div class="chart-container">
+        <div class="chart-background">
+          ${backgroundHtml}
+        </div>
+        <div class="chart-bars">
+          ${barsHtml}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Create popup content
+function createPopupContent(station) {
+  const amenitiesHtml = station.amenities.map(a =>
+    `<span class="amenity-badge">${a.emoji} ${a.name}</span>`
+  ).join('');
+
+  const chargerTypeLabel = {
+    'nacs': 'NACS Supercharger',
+    'party': 'Party Supercharger',
+    'supercharger': 'Supercharger'
+  }[station.chargerType] || station.chargerType;
+
+  const congestionFeeHtml = station.pricing.congestion
+    ? `<div class="congestion-fee">⚠️ Congestion fees (up to) $${station.pricing.congestion.rate.toFixed(2)}/${station.pricing.congestion.unit}</div>`
+    : '';
+
+  return `
+    <div class="popup-header">
+      <div class="popup-title">${station.name}</div>
+      ${station.commonName ? `<div class="popup-common-name">📍 ${station.commonName}</div>` : ''}
+    </div>
+    <div class="popup-body">
+      <div class="info-row">
+        <span class="info-row-icon">📍</span>
+        <span class="info-value">${station.address.full}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-row-icon">⚡</span>
+        <span class="info-label">Charging Speed:</span>
+        <span class="info-value">${station.maxPowerKw}kW</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-row-icon">🔌</span>
+        <span class="info-label">Stalls:</span>
+        <span class="info-value">${station.stallCount}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-row-icon">🏷️</span>
+        <span class="info-label">Type:</span>
+        <span class="info-value">${chargerTypeLabel}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-row-icon">🕐</span>
+        <span class="info-label">Hours:</span>
+        <span class="info-value">${station.accessHours}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-row-icon">🔓</span>
+        <span class="info-label">Access:</span>
+        <span class="info-value">${station.accessType}</span>
+      </div>
+
+      <div class="info-row">
+        <span class="info-row-icon">🚗</span>
+        <span class="info-label">Supports:</span>
+        <span class="info-value">
+          ${station.vehicleSupport.tesla ? 'Tesla' : ''}
+          ${station.vehicleSupport.nacs ? ' • NACS' : ''}
+          ${station.vehicleSupport.otherEv ? ' • Other EVs' : ''}
+        </span>
+      </div>
+
+      ${amenitiesHtml ? `
+        <div class="info-row" style="flex-direction: column; align-items: flex-start;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span class="info-row-icon">✨</span>
+            <span class="info-label">Amenities:</span>
+          </div>
+          <div class="amenities-row">${amenitiesHtml}</div>
+        </div>
+      ` : ''}
+
+      <div class="pricing-section">
+        ${congestionFeeHtml}
+        ${createCongestionChart(station.congestionData, station.pricing)}
+      </div>
     </div>
   `;
 }
@@ -107,224 +379,401 @@ function addMarkersToMap(stations) {
 
   // Add new markers
   stations.forEach(station => {
-    if (station.latitude && station.longitude) {
-      const marker = L.marker(
-        [station.latitude, station.longitude],
-        { icon: createMarkerIcon() }
-      );
+    const marker = L.marker([station.location.lat, station.location.lon], {
+      icon: createMarkerIcon(station)
+    });
 
-      // Tooltip on hover
-      marker.bindTooltip(formatTooltip(station), {
-        direction: 'top',
-        offset: [0, -20],
-        opacity: 0.95
-      });
+    marker.bindPopup(createPopupContent(station), {
+      maxWidth: 450,
+      className: 'custom-popup'
+    });
 
-      // Popup on click
-      marker.bindPopup(formatTooltip(station), {
-        maxWidth: 300
-      });
-
-      marker.addTo(map);
-      markers.push(marker);
-    }
+    marker.addTo(map);
+    markers.push(marker);
   });
 
   // Update stats
-  updateStats(stations.length);
-
-  // Fit bounds if there are markers
-  if (markers.length > 0) {
-    const group = L.featureGroup(markers);
-    map.fitBounds(group.getBounds().pad(0.1));
-  }
+  document.getElementById('visible-count').textContent = stations.length;
 }
 
-// Fetch stations with filters
-async function fetchStations(filters = {}) {
-  showLoading(true);
+// Get filter values
+function getFilters() {
+  const filters = {
+    chargerTypes: [],
+    powerLevels: [],
+    accessHours: [],
+    states: [],
+    priceMin: parseFloat(document.getElementById('price-min').value) / 100,
+    priceMax: parseFloat(document.getElementById('price-max').value) / 100,
+    priceFilterType: document.querySelector('input[name="price-type"]:checked').value,
+    amenities: [],
+    vehicleSupport: [],
+    pricingTypes: [],
+    timeFilterEnabled: document.getElementById('enable-time-filter').checked,
+    timeStart: parseInt(document.getElementById('time-start').value),
+    timeEnd: parseInt(document.getElementById('time-end').value)
+  };
 
-  try {
-    // Check if no vehicle types are selected - show nothing
-    const vehicleTypeChecked = document.querySelectorAll('input[name="vehicle_type"]:checked').length;
-    if (vehicleTypeChecked === 0) {
-      allStations = [];
-      addMarkersToMap([]);
-      showLoading(false);
-      return;
-    }
+  // Charger types
+  document.querySelectorAll('[id^="type-"]:checked').forEach(el => {
+    filters.chargerTypes.push(el.value);
+  });
 
-    const params = new URLSearchParams();
+  // Power levels
+  document.querySelectorAll('[id^="power-"]:checked').forEach(el => {
+    filters.powerLevels.push(el.value);
+  });
 
-    // Add filters to params
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        params.append(key, value);
-      }
-    });
-
-    const response = await fetch(`${API_BASE_URL}/stations?${params}`);
-    const data = await response.json();
-
-    allStations = data.stations;
-    addMarkersToMap(allStations);
-  } catch (error) {
-    console.error('Error fetching stations:', error);
-    alert('Failed to load stations. Please ensure the backend server is running.');
-  } finally {
-    showLoading(false);
-  }
-}
-
-// Get current filters from UI
-function getCurrentFilters() {
-  const filters = {};
-
-  // Vehicle types
-  const vehicleTypes = Array.from(
-    document.querySelectorAll('input[name="vehicle_type"]:checked')
-  ).map(input => input.value);
-
-  // Always send vehicle type filter, even if all are checked
-  // This ensures proper filtering behavior
-  if (vehicleTypes.length > 0) {
-    filters.vehicle_type = vehicleTypes.join(',');
-  }
+  // Access hours
+  document.querySelectorAll('[id^="hours-"]:checked').forEach(el => {
+    filters.accessHours.push(el.value);
+  });
 
   // States
-  const states = Array.from(
-    document.querySelectorAll('input[name="state"]:checked')
-  ).map(input => input.value);
+  document.querySelectorAll('[id^="state-"]:checked').forEach(el => {
+    filters.states.push(el.value);
+  });
 
-  if (states.length > 0 && states.length < 3) {
-    filters.state = states.join(',');
-  }
+  // Amenities
+  document.querySelectorAll('[id^="amenity-"]:checked').forEach(el => {
+    filters.amenities.push(el.value);
+  });
 
-  // Price range
-  const minPrice = document.getElementById('minPrice').value;
-  const maxPrice = document.getElementById('maxPrice').value;
+  // Vehicle support
+  document.querySelectorAll('[id^="support-"]:checked').forEach(el => {
+    filters.vehicleSupport.push(el.value);
+  });
 
-  if (minPrice) filters.min_price = minPrice;
-  if (maxPrice) filters.max_price = maxPrice;
-
-  // Peak pricing
-  const peakPricing = document.querySelector('input[name="peak_pricing"]:checked').value;
-  if (peakPricing === 'peak') {
-    filters.has_peak_pricing = 'true';
-  } else if (peakPricing === 'no_peak') {
-    filters.has_peak_pricing = 'false';
-  }
+  // Pricing types
+  document.querySelectorAll('[id^="pricing-"]:checked').forEach(el => {
+    filters.pricingTypes.push(el.value);
+  });
 
   return filters;
 }
 
-// Apply filters
-function applyFilters() {
-  const filters = getCurrentFilters();
-  fetchStations(filters);
-}
+// Filter stations
+function filterStations() {
+  const filters = getFilters();
 
-// Reset filters
-function resetFilters() {
-  // Reset checkboxes
-  document.querySelectorAll('input[name="vehicle_type"]').forEach(input => {
-    input.checked = input.value === 'tesla';
+  const filtered = allStations.filter(station => {
+    // Charger type
+    if (filters.chargerTypes.length > 0) {
+      if (!filters.chargerTypes.includes(station.chargerType)) return false;
+    }
+
+    // Power level
+    if (filters.powerLevels.length > 0) {
+      const powerCategory =
+        station.maxPowerKw >= 250 ? 'ultra' :
+        station.maxPowerKw >= 150 ? 'fast' : 'standard';
+
+      if (!filters.powerLevels.includes(powerCategory)) return false;
+    }
+
+    // Access hours
+    if (filters.accessHours.length > 0) {
+      const hoursCategory = station.accessHours === '24/7' ? '24/7' : 'limited';
+      if (!filters.accessHours.includes(hoursCategory)) return false;
+    }
+
+    // States
+    if (filters.states.length > 0) {
+      if (!filters.states.includes(station.address.state)) return false;
+    }
+
+    // Time range + price filter
+    if (filters.timeFilterEnabled) {
+      // Select which pricing to check based on filter
+      let pricesToCheck = [];
+      if (filters.priceFilterType === 'both') {
+        pricesToCheck = [...station.pricing.tesla, ...station.pricing.nonTesla];
+      } else if (filters.priceFilterType === 'tesla') {
+        pricesToCheck = station.pricing.tesla;
+      } else if (filters.priceFilterType === 'nonTesla') {
+        pricesToCheck = station.pricing.nonTesla;
+      }
+
+      if (pricesToCheck.length > 0) {
+        // Check if ANY pricing tier within the time range matches the price range
+        const hasMatchingPrice = pricesToCheck.some(tier => {
+          const tierStart = parseInt(tier.startTime.split(':')[0]);
+          let tierEnd = parseInt(tier.endTime.split(':')[0]);
+          if (tierEnd === 0) tierEnd = 24;
+
+          // Check if tier overlaps with selected time range
+          const overlaps = (tierStart <= filters.timeEnd && tierEnd >= filters.timeStart) ||
+                          (filters.timeStart > filters.timeEnd && (tierStart <= filters.timeEnd || tierEnd >= filters.timeStart));
+
+          return overlaps && tier.rate >= filters.priceMin && tier.rate <= filters.priceMax;
+        });
+        if (!hasMatchingPrice) return false;
+      }
+    } else {
+      // Regular price filter (any time)
+      let pricesToCheck = [];
+      if (filters.priceFilterType === 'both') {
+        pricesToCheck = [...station.pricing.tesla, ...station.pricing.nonTesla];
+      } else if (filters.priceFilterType === 'tesla') {
+        pricesToCheck = station.pricing.tesla;
+      } else if (filters.priceFilterType === 'nonTesla') {
+        pricesToCheck = station.pricing.nonTesla;
+      }
+
+      if (pricesToCheck.length > 0) {
+        const hasMatchingPrice = pricesToCheck.some(tier =>
+          tier.rate >= filters.priceMin && tier.rate <= filters.priceMax
+        );
+        if (!hasMatchingPrice) return false;
+      }
+    }
+
+    // Vehicle support filter
+    if (filters.vehicleSupport.length > 0) {
+      const hasSupport = filters.vehicleSupport.some(type => {
+        if (type === 'tesla') return station.vehicleSupport.tesla;
+        if (type === 'nacs') return station.vehicleSupport.nacs;
+        if (type === 'otherEv') return station.vehicleSupport.otherEv;
+        return false;
+      });
+      if (!hasSupport) return false;
+    }
+
+    // Pricing type filter
+    if (filters.pricingTypes.length > 0) {
+      const allPrices = [...station.pricing.tesla, ...station.pricing.nonTesla];
+      const hasPeakPricing = allPrices.length > 1; // Multiple tiers = peak pricing
+      const hasFlatRate = allPrices.length === 1; // Single tier = flat rate
+
+      const matches = filters.pricingTypes.some(type => {
+        if (type === 'peak') return hasPeakPricing;
+        if (type === 'flat') return hasFlatRate;
+        return false;
+      });
+      if (!matches) return false;
+    }
+
+    // Amenities - must have ALL selected amenities
+    if (filters.amenities.length > 0) {
+      const stationAmenities = station.amenities.map(a => a.name);
+      const hasAllAmenities = filters.amenities.every(required =>
+        stationAmenities.includes(required)
+      );
+      if (!hasAllAmenities) return false;
+    }
+
+    return true;
   });
 
-  document.querySelectorAll('input[name="state"]').forEach(input => {
-    input.checked = true;
-  });
-
-  // Reset price inputs
-  document.getElementById('minPrice').value = '';
-  document.getElementById('maxPrice').value = '';
-
-  // Reset charging time
-  document.getElementById('chargingTime').value = '';
-
-  // Reset peak pricing
-  document.querySelector('input[name="peak_pricing"][value="all"]').checked = true;
-
-  // Fetch all stations
-  fetchStations();
+  addMarkersToMap(filtered);
 }
 
-// Update stats
-function updateStats(displayedCount) {
-  document.getElementById('displayedStations').textContent = displayedCount;
+// Update price range labels
+function updatePriceLabels() {
+  const min = parseFloat(document.getElementById('price-min').value) / 100;
+  const max = parseFloat(document.getElementById('price-max').value) / 100;
+  document.getElementById('price-min-value').textContent = `$${min.toFixed(2)}`;
+  document.getElementById('price-max-value').textContent = `$${max.toFixed(2)}`;
 }
 
-// Show/hide loading
-function showLoading(show) {
-  const loading = document.getElementById('loading');
-  if (show) {
-    loading.classList.remove('hidden');
-  } else {
-    loading.classList.add('hidden');
-  }
+// Format hour to display format (0 = 12am, 13 = 1pm, etc.)
+function formatHour(hour) {
+  if (hour === 0) return '12am';
+  if (hour < 12) return `${hour}am`;
+  if (hour === 12) return '12pm';
+  return `${hour - 12}pm`;
 }
 
-// Fetch total stations count
-async function fetchTotalStats() {
-  try {
-    const response = await fetch(`${API_BASE_URL}/stats`);
-    const data = await response.json();
-    document.getElementById('totalStations').textContent = data.overall.total_stations;
-  } catch (error) {
-    console.error('Error fetching stats:', error);
-  }
+// Update time range labels
+function updateTimeLabels() {
+  const start = parseInt(document.getElementById('time-start').value);
+  const end = parseInt(document.getElementById('time-end').value);
+  document.getElementById('time-start-value').textContent = formatHour(start);
+  document.getElementById('time-end-value').textContent = formatHour(end);
 }
 
 // Search functionality
-function setupSearch() {
-  const searchInput = document.getElementById('searchInput');
-  let searchTimeout;
+let searchResults = [];
+let selectedSearchIndex = -1;
+let currentOpenMarker = null;
 
-  searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchTimeout);
+function searchStations(query) {
+  if (!query || query.length < 2) {
+    return [];
+  }
 
-    searchTimeout = setTimeout(() => {
-      const searchTerm = e.target.value.toLowerCase().trim();
+  const lowerQuery = query.toLowerCase();
 
-      if (searchTerm === '') {
-        // Show all stations
-        addMarkersToMap(allStations);
-        return;
-      }
-
-      // Filter stations by search term
-      const filtered = allStations.filter(station => {
-        return (
-          station.name.toLowerCase().includes(searchTerm) ||
-          station.city.toLowerCase().includes(searchTerm) ||
-          station.state.toLowerCase().includes(searchTerm) ||
-          station.zip.includes(searchTerm)
-        );
-      });
-
-      addMarkersToMap(filtered);
-    }, 300);
+  return allStations.filter(station => {
+    return station.name.toLowerCase().includes(lowerQuery) ||
+           station.commonName.toLowerCase().includes(lowerQuery) ||
+           station.address.city.toLowerCase().includes(lowerQuery) ||
+           station.address.state.toLowerCase().includes(lowerQuery) ||
+           station.address.full.toLowerCase().includes(lowerQuery);
   });
 }
 
-// Initialize app
-async function init() {
+function showStationPopup(station) {
+  // Find the marker for this station
+  const markerIndex = markers.findIndex(m => {
+    const latlng = m.getLatLng();
+    return latlng.lat === station.location.lat && latlng.lng === station.location.lon;
+  });
+
+  if (markerIndex >= 0) {
+    const marker = markers[markerIndex];
+
+    // Close any currently open popup (different marker)
+    if (currentOpenMarker && currentOpenMarker !== marker) {
+      currentOpenMarker.closePopup();
+    }
+
+    currentOpenMarker = marker;
+
+    // Always call openPopup - Leaflet handles centering and won't close/reopen if already open
+    marker.openPopup();
+  }
+}
+
+function renderSearchResults() {
+  const resultsDiv = document.getElementById('search-results');
+
+  if (searchResults.length === 0) {
+    resultsDiv.style.display = 'none';
+    return;
+  }
+
+  resultsDiv.innerHTML = searchResults.map((station, index) => {
+    const highlighted = index === selectedSearchIndex ? 'highlighted' : '';
+    return `
+      <div class="search-result-item ${highlighted}" data-index="${index}">
+        <div class="search-result-name">${station.name}</div>
+        <div class="search-result-details">
+          ${station.commonName ? `${station.commonName} • ` : ''}${station.address.city}, ${station.address.state}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  resultsDiv.style.display = 'block';
+
+  // Add click listeners
+  resultsDiv.querySelectorAll('.search-result-item').forEach((item, index) => {
+    item.addEventListener('click', () => {
+      showStationPopup(searchResults[index]);
+      document.getElementById('search-input').value = searchResults[index].name;
+      resultsDiv.style.display = 'none';
+    });
+  });
+
+  // Show popup for highlighted result
+  if (selectedSearchIndex >= 0 && selectedSearchIndex < searchResults.length) {
+    showStationPopup(searchResults[selectedSearchIndex]);
+  }
+}
+
+// Load stations
+async function loadStations() {
+  try {
+    const response = await fetch('/data/map-stations.json');
+    allStations = await response.json();
+
+    document.getElementById('total-count').textContent = allStations.length;
+    document.getElementById('loading').style.display = 'none';
+
+    filterStations();
+  } catch (error) {
+    console.error('Error loading stations:', error);
+    document.getElementById('loading').innerHTML = '<div>Error loading stations</div>';
+  }
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
   initMap();
+  loadStations();
 
-  // Event listeners
-  document.getElementById('applyFilters').addEventListener('click', applyFilters);
-  document.getElementById('resetFilters').addEventListener('click', resetFilters);
+  // Add event listeners for filters
+  document.querySelectorAll('input[type="checkbox"]').forEach(input => {
+    input.addEventListener('change', filterStations);
+  });
 
-  setupSearch();
+  document.getElementById('price-min').addEventListener('input', () => {
+    updatePriceLabels();
+    filterStations();
+  });
 
-  // Fetch initial data
-  await fetchTotalStats();
-  await fetchStations();
-}
+  document.getElementById('price-max').addEventListener('input', () => {
+    updatePriceLabels();
+    filterStations();
+  });
 
-// Start app when DOM is ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
-}
+  // Price type radio buttons
+  document.querySelectorAll('input[name="price-type"]').forEach(radio => {
+    radio.addEventListener('change', filterStations);
+  });
+
+  // Time filter toggle
+  document.getElementById('enable-time-filter').addEventListener('change', (e) => {
+    const controls = document.getElementById('time-filter-controls');
+    controls.style.display = e.target.checked ? 'block' : 'none';
+    filterStations();
+  });
+
+  // Time range sliders
+  document.getElementById('time-start').addEventListener('input', () => {
+    updateTimeLabels();
+    filterStations();
+  });
+
+  document.getElementById('time-end').addEventListener('input', () => {
+    updateTimeLabels();
+    filterStations();
+  });
+
+  updateTimeLabels();
+
+  // Search input
+  const searchInput = document.getElementById('search-input');
+  const searchResultsDiv = document.getElementById('search-results');
+
+  searchInput.addEventListener('input', (e) => {
+    const query = e.target.value;
+    searchResults = searchStations(query);
+    selectedSearchIndex = searchResults.length > 0 ? 0 : -1;
+    renderSearchResults();
+  });
+
+  // Keyboard navigation for search
+  searchInput.addEventListener('keydown', (e) => {
+    if (searchResults.length === 0) return;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      selectedSearchIndex = Math.min(selectedSearchIndex + 1, searchResults.length - 1);
+      renderSearchResults();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      selectedSearchIndex = Math.max(selectedSearchIndex - 1, 0);
+      renderSearchResults();
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (selectedSearchIndex >= 0) {
+        showStationPopup(searchResults[selectedSearchIndex]);
+        searchInput.value = searchResults[selectedSearchIndex].name;
+        searchResultsDiv.style.display = 'none';
+      }
+    } else if (e.key === 'Escape') {
+      searchResultsDiv.style.display = 'none';
+    }
+  });
+
+  // Close search results when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!searchInput.contains(e.target) && !searchResultsDiv.contains(e.target)) {
+      searchResultsDiv.style.display = 'none';
+    }
+  });
+
+  updatePriceLabels();
+});

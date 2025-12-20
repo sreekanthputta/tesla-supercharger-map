@@ -196,6 +196,51 @@ function processStations() {
     console.log(`  ${type}: ${count}`);
   });
 
+  console.log('\nStates:');
+  const states = {};
+  processedStations.forEach(s => {
+    states[s.address.state] = (states[s.address.state] || 0) + 1;
+  });
+  Object.entries(states).sort().forEach(([state, count]) => {
+    console.log(`  ${state}: ${count}`);
+  });
+
+  // Data quality checks
+  console.log('\nData Quality:');
+  let noPricing = 0;
+  let noAmenities = 0;
+  let noCongestion = 0;
+
+  processedStations.forEach(s => {
+    if (s.pricing.tesla.length === 0 && s.pricing.nonTesla.length === 0) {
+      noPricing++;
+    }
+    if (s.amenities.length === 0) {
+      noAmenities++;
+    }
+    if (!s.congestionData || s.congestionData.length === 0) {
+      noCongestion++;
+    }
+  });
+
+  if (noPricing === 0) {
+    console.log('  ✓ All stations have pricing');
+  } else {
+    console.log(`  ⚠ ${noPricing} stations missing pricing`);
+  }
+
+  if (noAmenities === 0) {
+    console.log('  ✓ All stations have amenities');
+  } else {
+    console.log(`  ⚠ ${noAmenities} stations missing amenities`);
+  }
+
+  if (noCongestion === 0) {
+    console.log('  ✓ All stations have congestion data');
+  } else {
+    console.log(`  ⚠ ${noCongestion} stations missing congestion data`);
+  }
+
   console.log(`\n✓ Saved to data/map-stations.json`);
 }
 
