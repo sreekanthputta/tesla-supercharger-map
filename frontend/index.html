@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tesla Supercharger Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>Find Us</h1>
+      </div>
+
+      <div class="search-section">
+        <input type="text" id="searchInput" placeholder="Enter Location" class="search-input">
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section">
+        <div class="filter-group">
+          <h3>Superchargers</h3>
+
+          <div class="filter-item">
+            <label class="filter-label">Vehicle Type:</label>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" name="vehicle_type" value="tesla" checked>
+                Tesla
+              </label>
+              <label>
+                <input type="checkbox" name="vehicle_type" value="nacs">
+                NACS Partner
+              </label>
+              <label>
+                <input type="checkbox" name="vehicle_type" value="other_ev">
+                Other EV
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-item">
+            <label class="filter-label">States:</label>
+            <div class="checkbox-group">
+              <label>
+                <input type="checkbox" name="state" value="CO" checked>
+                Colorado
+              </label>
+              <label>
+                <input type="checkbox" name="state" value="NM" checked>
+                New Mexico
+              </label>
+              <label>
+                <input type="checkbox" name="state" value="TX" checked>
+                Texas
+              </label>
+            </div>
+          </div>
+
+          <div class="filter-item">
+            <label class="filter-label">Price Range ($/kWh):</label>
+            <div class="price-range">
+              <input type="number" id="minPrice" placeholder="Min" step="0.01" class="price-input">
+              <span>to</span>
+              <input type="number" id="maxPrice" placeholder="Max" step="0.01" class="price-input">
+            </div>
+          </div>
+
+          <div class="filter-item">
+            <label class="filter-label">Charging Time:</label>
+            <select id="chargingTime" class="time-select">
+              <option value="">Any Time</option>
+              <option value="00:00">12:00 AM - 4:00 AM (Overnight)</option>
+              <option value="04:00">4:00 AM - 8:00 AM (Early Morning)</option>
+              <option value="08:00">8:00 AM - 12:00 PM (Morning)</option>
+              <option value="12:00">12:00 PM - 4:00 PM (Afternoon)</option>
+              <option value="16:00">4:00 PM - 8:00 PM (Peak)</option>
+              <option value="20:00">8:00 PM - 12:00 AM (Evening)</option>
+            </select>
+          </div>
+
+          <div class="filter-item">
+            <label class="filter-label">Pricing Type:</label>
+            <div class="checkbox-group">
+              <label>
+                <input type="radio" name="peak_pricing" value="all" checked>
+                All
+              </label>
+              <label>
+                <input type="radio" name="peak_pricing" value="peak">
+                Peak Pricing Available
+              </label>
+              <label>
+                <input type="radio" name="peak_pricing" value="no_peak">
+                Flat Rate Only
+              </label>
+            </div>
+          </div>
+
+          <button id="applyFilters" class="apply-btn">Apply Filters</button>
+          <button id="resetFilters" class="reset-btn">Reset</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-section">
+        <div class="stat-item">
+          <span class="stat-label">Total Stations:</span>
+          <span class="stat-value" id="totalStations">0</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Displayed:</span>
+          <span class="stat-value" id="displayedStations">0</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Map Container -->
+    <main class="map-container">
+      <div id="map"></div>
+      <div id="loading" class="loading">Loading stations...</div>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
