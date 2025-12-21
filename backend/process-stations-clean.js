@@ -21,7 +21,14 @@ function isInRegion(lat, lon) {
 }
 
 function parsePricing(effectivePricebooks) {
-  if (!effectivePricebooks) return { tesla: [], nonTesla: [], congestion: null };
+  if (!effectivePricebooks || effectivePricebooks.length === 0) {
+    // No pricing data = FREE
+    return {
+      tesla: [{ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true }],
+      nonTesla: [{ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true }],
+      congestion: null
+    };
+  }
 
   const charging = effectivePricebooks.filter(pb => pb.feeType === 'CHARGING');
   const congestion = effectivePricebooks.find(pb => pb.feeType === 'CONGESTION');
@@ -33,7 +40,8 @@ function parsePricing(effectivePricebooks) {
       rate: pb.rateBase,
       startTime: pb.startTime || '00:00',
       endTime: pb.endTime || '24:00',
-      isTou: pb.isTou
+      isTou: pb.isTou,
+      isFree: pb.rateBase === 0
     }))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
@@ -43,9 +51,20 @@ function parsePricing(effectivePricebooks) {
       rate: pb.rateBase,
       startTime: pb.startTime || '00:00',
       endTime: pb.endTime || '24:00',
-      isTou: pb.isTou
+      isTou: pb.isTou,
+      isFree: pb.rateBase === 0
     }))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+  // If no Tesla pricing found, assume free
+  if (teslaPricing.length === 0) {
+    teslaPricing.push({ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true });
+  }
+
+  // If no non-Tesla pricing found, assume free
+  if (nonTeslaPricing.length === 0) {
+    nonTeslaPricing.push({ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true });
+  }
 
   return {
     tesla: teslaPricing,
@@ -71,10 +90,12 @@ function mapAmenityToEmoji(amenity) {
 }
 
 function determineChargerType(locationType) {
-  if (locationType.includes('supercharger')) return 'supercharger';
-  if (locationType.includes('nacs')) return 'nacs';
-  if (locationType.includes('party')) return 'party';
-  if (locationType.includes('destination_charger')) return 'destination';
+  if (!locationType || locationType.length === 0) return 'other';
+  // Use .some() to check if any element contains the substring
+  if (locationType.some(t => t.includes('destination_charger'))) return 'destination';
+  if (locationType.some(t => t.includes('nacs'))) return 'nacs';
+  if (locationType.some(t => t.includes('party'))) return 'party';
+  if (locationType.some(t => t.includes('supercharger'))) return 'supercharger';
   return 'other';
 }
 
@@ -131,14 +152,8 @@ function processStations() {
     const locationType = location.location_type || [];
     const chargerType = determineChargerType(locationType);
 
-    // Exclude destination chargers
-    if (chargerType === 'destination') {
-      excluded.destination++;
-      continue;
-    }
-
-    // Only include NACS and party chargers (exclude regular superchargers)
-    if (chargerType !== 'nacs' && chargerType !== 'party') {
+    // Only include NACS, party, and destination chargers (exclude regular superchargers)
+    if (chargerType !== 'nacs' && chargerType !== 'party' && chargerType !== 'destination') {
       excluded.destination++;
       continue;
     }
@@ -149,8 +164,10 @@ function processStations() {
       continue;
     }
 
-    // Exclude Tesla-only (must be open to non-Tesla)
-    if (!details.openToNonTeslas) {
+    // For superchargers/NACS/party: exclude Tesla-only
+    // For destination chargers: include both Tesla-only and open to non-Tesla
+    const isDestination = chargerType === 'destination';
+    if (!isDestination && !details.openToNonTeslas) {
       excluded.teslaOnly++;
       continue;
     }
@@ -158,11 +175,19 @@ function processStations() {
     // Parse pricing
     const pricing = parsePricing(details.effectivePricebooks);
 
-    // Get current day congestion data
+    // Get current day congestion data (may be null for destination chargers)
     const now = new Date();
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const currentDay = dayNames[now.getDay()];
     const congestionData = details.availabilityProfile?.availabilityProfile?.[currentDay]?.congestionValue || [];
+
+    // Determine vehicle compatibility
+    const vehicleSupport = {
+      tesla: true,  // All chargers support Tesla
+      nacs: details.openToNonTeslas === true,
+      otherEv: details.openToNonTeslas === true,
+      teslaOnly: details.openToNonTeslas === false
+    };
 
     // Build station object
     const station = {
@@ -196,11 +221,7 @@ function processStations() {
       pricing: pricing,
       congestionData: congestionData,
       openToNonTeslas: details.openToNonTeslas,
-      vehicleSupport: {
-        tesla: true,
-        nacs: details.openToNonTeslas,
-        otherEv: details.openToNonTeslas
-      }
+      vehicleSupport: vehicleSupport
     };
 
     processedStations.push(station);
@@ -208,6 +229,9 @@ function processStations() {
 
   // Save processed data
   fs.writeFileSync('./data/map-stations.json', JSON.stringify(processedStations, null, 2));
+
+  // Also copy to frontend data directory
+  fs.writeFileSync('../frontend/data/map-stations.json', JSON.stringify(processedStations, null, 2));
 
   console.log('═'.repeat(50));
   console.log(`✅ Processed ${processedStations.length} stations\n`);
@@ -275,6 +299,7 @@ function processStations() {
 
   console.log('═'.repeat(50));
   console.log(`\n✓ Saved to: data/map-stations.json`);
+  console.log('✓ Copied to: ../frontend/data/map-stations.json');
   console.log('✓ Ready to serve on map\n');
 }
 

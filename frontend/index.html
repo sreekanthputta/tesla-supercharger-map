@@ -207,6 +207,10 @@
       background: #ff9500;
     }
 
+    .marker-destination {
+      background: #007aff;
+    }
+
     .marker-fast {
       background: #34c759;
     }
@@ -311,6 +315,23 @@
       background: #34c75910;
       color: #34c759;
       border: 1px solid #34c75930;
+    }
+
+    .vehicle-tag.tesla-only {
+      background: #ff950010;
+      color: #ff9500;
+      border: 1px solid #ff950030;
+    }
+
+    .badge-free {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      background: #34c75915;
+      color: #34c759;
+      border: 1px solid #34c75935;
     }
 
     .compact-info {
@@ -634,6 +655,10 @@
             <input type="checkbox" id="type-party" value="party" checked>
             <label for="type-party">🟠 Party Supercharger</label>
           </div>
+          <div class="filter-option">
+            <input type="checkbox" id="type-destination" value="destination" checked>
+            <label for="type-destination">🔵 Destination Charger</label>
+          </div>
         </div>
       </div>
 
@@ -751,16 +776,16 @@
         <h3>Vehicle Support</h3>
         <div class="filter-group">
           <div class="filter-option">
-            <input type="checkbox" id="support-tesla" value="tesla" checked>
-            <label for="support-tesla">🔴 Tesla</label>
+            <input type="checkbox" id="support-all" value="all" checked>
+            <label for="support-all">🔌 All Vehicles</label>
+          </div>
+          <div class="filter-option">
+            <input type="checkbox" id="support-tesla-only" value="teslaOnly" checked>
+            <label for="support-tesla-only">🟠 Tesla Only</label>
           </div>
           <div class="filter-option">
             <input type="checkbox" id="support-nacs" value="nacs" checked>
-            <label for="support-nacs">🟣 NACS</label>
-          </div>
-          <div class="filter-option">
-            <input type="checkbox" id="support-other-ev" value="otherEv" checked>
-            <label for="support-other-ev">🔵 Other EVs</label>
+            <label for="support-nacs">🟣 NACS Compatible</label>
           </div>
         </div>
       </div>

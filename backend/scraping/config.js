@@ -13,13 +13,13 @@ export const CONFIG = {
   },
 
   // Charger types to include (location_type field)
-  chargerTypes: ['nacs', 'party'],
+  chargerTypes: ['nacs', 'party', 'destination_charger', 'destination_charger_nontesla'],
 
   // API configuration
+  // Note: programType is determined dynamically based on charger type
   api: {
     endpoint: 'https://www.tesla.com/api/findus/get-charger-details',
     params: {
-      programType: 'supercharger',
       locale: 'en-US',
       isInHkMoTw: false
     },
@@ -58,4 +58,14 @@ export function hasDesiredChargerType(locationType) {
   return CONFIG.chargerTypes.some(type =>
     locationType.some(t => t.includes(type))
   );
+}
+
+/**
+ * Determine API programType based on location type
+ * Destination chargers use 'charger', others use 'supercharger'
+ */
+export function getProgramType(locationType) {
+  if (!locationType) return 'supercharger';
+  const isDestination = locationType.some(t => t.includes('destination_charger'));
+  return isDestination ? 'charger' : 'supercharger';
 }

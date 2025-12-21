@@ -20,7 +20,10 @@ function createMarkerIcon(station) {
   let icon = '⚡';
 
   // Determine type and icon
-  if (station.chargerType === 'nacs') {
+  if (station.chargerType === 'destination') {
+    className += ' marker-destination';
+    icon = '🔌';
+  } else if (station.chargerType === 'nacs') {
     className += ' marker-nacs';
     icon = '🟣';
   } else if (station.chargerType === 'party') {
@@ -28,8 +31,8 @@ function createMarkerIcon(station) {
     icon = '🟠';
   }
 
-  // Show fast charging
-  if (station.maxPowerKw >= 250) {
+  // Show fast charging for superchargers
+  if (station.maxPowerKw >= 250 && station.chargerType !== 'destination') {
     icon = '⚡';
   }
 
@@ -316,26 +319,59 @@ function createPopupContent(station) {
 
   // Create vehicle support tags
   const vehicleTags = [];
-  if (station.vehicleSupport.tesla) vehicleTags.push('<span class="vehicle-tag tesla">Tesla</span>');
-  if (station.vehicleSupport.nacs) vehicleTags.push('<span class="vehicle-tag nacs">NACS</span>');
-  if (station.vehicleSupport.otherEv) vehicleTags.push('<span class="vehicle-tag other-ev">Other EVs</span>');
+  if (station.vehicleSupport.teslaOnly) {
+    vehicleTags.push('<span class="vehicle-tag tesla-only">Tesla Only</span>');
+  } else {
+    if (station.vehicleSupport.tesla) vehicleTags.push('<span class="vehicle-tag tesla">Tesla</span>');
+    if (station.vehicleSupport.nacs) vehicleTags.push('<span class="vehicle-tag nacs">NACS</span>');
+    if (station.vehicleSupport.otherEv) vehicleTags.push('<span class="vehicle-tag other-ev">Other EVs</span>');
+  }
 
   // Create amenity emojis
   const amenitiesEmojis = station.amenities.map(a => a.emoji).join(' ');
+
+  // Get charger type label
+  const chargerTypeLabel = {
+    'nacs': 'NACS Supercharger',
+    'party': 'Party Supercharger',
+    'destination': 'Destination Charger',
+    'supercharger': 'Supercharger'
+  }[station.chargerType] || station.chargerType;
+
+  // Determine charging speed label
+  let speedLabel = `${station.maxPowerKw}kW`;
+  if (station.maxPowerKw >= 150) {
+    speedLabel += ' (Fast)';
+  } else if (station.maxPowerKw <= 20) {
+    speedLabel += ' (Level 2)';
+  }
+
+  // Format pricing with FREE support
+  const teslaPricing = station.pricing.tesla && station.pricing.tesla[0]
+    ? (station.pricing.tesla[0].isFree ? '<span class="badge-free">🆓 FREE</span>' : `$${station.pricing.tesla[0].rate.toFixed(2)}/kWh`)
+    : 'N/A';
+
+  const nonTeslaPricing = station.pricing.nonTesla && station.pricing.nonTesla[0]
+    ? (station.pricing.nonTesla[0].isFree ? '<span class="badge-free">🆓 FREE</span>' : `$${station.pricing.nonTesla[0].rate.toFixed(2)}/kWh`)
+    : 'N/A';
 
   return `
     <div class="popup-body" style="padding: 16px;">
       <div style="margin-bottom: 4px; font-size: 18px; font-weight: 600; color: #333;">
         ${station.name}
       </div>
-      ${station.commonName ? `<div style="margin-bottom: 12px; font-size: 13px; color: #667eea;">📍 ${station.commonName}</div>` : ''}
+      ${station.commonName ? `<div style="margin-bottom: 8px; font-size: 13px; color: #667eea;">📍 ${station.commonName}</div>` : ''}
+
+      <div style="margin-bottom: 8px; font-size: 12px; color: #999;">
+        ${chargerTypeLabel}
+      </div>
 
       <div style="margin-bottom: 12px; font-size: 13px; color: #666;">
         ${station.address.full}
       </div>
 
       <div style="font-size: 15px; line-height: 1.8; color: #333; margin-bottom: 10px;">
-        🔌 ${station.stallCount} • 🕐 ${station.accessHours} • ⚡ ${station.maxPowerKw}kW • 🔓 ${station.accessType}
+        🔌 ${station.stallCount} • 🕐 ${station.accessHours} • ⚡ ${speedLabel} • 🔓 ${station.accessType}
       </div>
 
       <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
@@ -346,6 +382,13 @@ function createPopupContent(station) {
           ${vehicleTags.join('')}
         </div>
       </div>
+
+      ${station.pricing.tesla.length > 0 || station.pricing.nonTesla.length > 0 ? `
+        <div style="margin-bottom: 12px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-size: 13px;">
+          <div style="margin-bottom: 4px;"><strong>Tesla:</strong> ${teslaPricing}</div>
+          <div><strong>Non-Tesla:</strong> ${nonTeslaPricing}</div>
+        </div>
+      ` : ''}
 
       <div class="pricing-section">
         ${congestionFeeHtml}
@@ -515,9 +558,9 @@ function filterStations() {
     // Vehicle support filter
     if (filters.vehicleSupport.length > 0) {
       const hasSupport = filters.vehicleSupport.some(type => {
-        if (type === 'tesla') return station.vehicleSupport.tesla;
+        if (type === 'all') return !station.vehicleSupport.teslaOnly;
+        if (type === 'teslaOnly') return station.vehicleSupport.teslaOnly;
         if (type === 'nacs') return station.vehicleSupport.nacs;
-        if (type === 'otherEv') return station.vehicleSupport.otherEv;
         return false;
       });
       if (!hasSupport) return false;
@@ -672,8 +715,8 @@ async function loadStations() {
   }
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
+// Initialize all event listeners and map
+function initialize() {
   initMap();
   loadStations();
 
@@ -760,4 +803,22 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   updatePriceLabels();
-});
+}
+
+// Wait for both DOM and external scripts to load
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof L !== 'undefined') {
+      initialize();
+    } else {
+      window.addEventListener('load', initialize);
+    }
+  });
+} else {
+  // DOM already loaded
+  if (typeof L !== 'undefined') {
+    initialize();
+  } else {
+    window.addEventListener('load', initialize);
+  }
+}

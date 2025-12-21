@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { CONFIG } from './config.js';
+import { CONFIG, getProgramType } from './config.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,9 +67,17 @@ const browserScript = `
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Helper to determine programType for each station
+  function getProgramType(locationType) {
+    if (!locationType) return 'supercharger';
+    const isDestination = locationType.some(t => t.includes('destination_charger'));
+    return isDestination ? 'charger' : 'supercharger';
+  }
+
   // Fetch with retry logic
   async function fetchStationDetails(station, retries = 3) {
-    const url = \`\${API_BASE}?\${API_PARAMS}&locationSlug=\${station.slug}\`;
+    const programType = getProgramType(station.locationType);
+    const url = \`\${API_BASE}?\${API_PARAMS}&programType=\${programType}&locationSlug=\${station.slug}\`;
 
     for (let attempt = 0; attempt < retries; attempt++) {
       try {

@@ -69,7 +69,8 @@ const output = {
     uuid: loc.uuid,
     slug: loc.location_url_slug,
     lat: loc.latitude,
-    lon: loc.longitude
+    lon: loc.longitude,
+    locationType: loc.location_type  // Needed to determine programType
   }))
 };
 

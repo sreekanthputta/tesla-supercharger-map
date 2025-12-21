@@ -2,11 +2,6 @@
 node_modules/
 package-lock.json
 
-# Data files
-backend/data/raw-*.json
-backend/data/stations-to-fetch.json
-*.db
-
 # Logs
 *.log
 npm-debug.log*

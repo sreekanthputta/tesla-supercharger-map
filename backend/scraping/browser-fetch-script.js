@@ -1,13 +1,13 @@
 
 /**
  * TESLA SUPERCHARGER DETAIL FETCHER
- * Generated: 2025-12-21T01:16:08.699Z
+ * Generated: 2025-12-21T07:09:26.165Z
  *
  * Copy and paste this entire script into browser console at:
  * https://www.tesla.com/findus
  *
- * This will fetch details for 223 stations.
- * Estimated time: ~2 minutes
+ * This will fetch details for 534 stations.
+ * Estimated time: ~5 minutes
  */
 
 (async function() {
@@ -15,1351 +15,4825 @@
   console.log('═'.repeat(60));
   console.log('🚀 Tesla Supercharger Detail Fetcher');
   console.log('═'.repeat(60));
-  console.log('Total stations to fetch: 223');
-  console.log('Estimated time: ~2 minutes\n');
+  console.log('Total stations to fetch: 534');
+  console.log('Estimated time: ~5 minutes\n');
 
   const API_BASE = 'https://www.tesla.com/api/findus/get-charger-details';
-  const API_PARAMS = new URLSearchParams({"programType":"supercharger","locale":"en-US","isInHkMoTw":false});
+  const API_PARAMS = new URLSearchParams({"locale":"en-US","isInHkMoTw":false});
   const DELAY_MS = 500;
 
   const stations = [
   {
-    "uuid": "32790069",
-    "slug": "457017",
-    "lat": 33.037701,
-    "lon": -96.707066
-  },
-  {
-    "uuid": "32790204",
-    "slug": "58767",
-    "lat": 30.210521,
-    "lon": -97.666623
-  },
-  {
-    "uuid": "32792793",
-    "slug": "centennialcosupercharger",
-    "lat": 39.567251,
-    "lon": -104.877918
-  },
-  {
-    "uuid": "32792795",
-    "slug": "conifercosupercharger",
-    "lat": 39.544076,
-    "lon": -105.289933
-  },
-  {
-    "uuid": "32792886",
-    "slug": "VillaAhumadaChihuahuasupercharger",
-    "lat": 30.623561,
-    "lon": -106.514457
-  },
-  {
-    "uuid": "32792890",
-    "slug": "chihuahuasupercharger",
-    "lat": 28.630123,
-    "lon": -106.12058
-  },
-  {
-    "uuid": "32792962",
-    "slug": "KyleTXSupercharger",
-    "lat": 30.012812,
-    "lon": -97.862652
-  },
-  {
-    "uuid": "32792988",
-    "slug": "thortoncosupercharger",
-    "lat": 39.914831,
-    "lon": -104.986678
-  },
-  {
-    "uuid": "32793034",
-    "slug": "AllenTXQ322",
-    "lat": 33.129626,
-    "lon": -96.674108
-  },
-  {
-    "uuid": "32793046",
-    "slug": "superiorcosouthmarshallroadsupercharging",
-    "lat": 39.954889,
-    "lon": -105.164575
-  },
-  {
-    "uuid": "32793050",
-    "slug": "CraigCOsupercharger",
-    "lat": 40.514098,
-    "lon": -107.539133
-  },
-  {
-    "uuid": "32793071",
-    "slug": "SilverthorneCOsupercharger",
-    "lat": 39.645915,
-    "lon": -106.080116
-  },
-  {
-    "uuid": "32793111",
-    "slug": "lowellarsupercharger",
-    "lat": 36.255358,
-    "lon": -94.152633
-  },
-  {
-    "uuid": "32793113",
-    "slug": "EdwardsCOSupercharger",
-    "lat": 39.648563,
-    "lon": -106.587126
-  },
-  {
-    "uuid": "32793185",
-    "slug": "westlakehillstxsupercharger",
-    "lat": 30.2898,
-    "lon": -97.827474
-  },
-  {
-    "uuid": "32793187",
-    "slug": "WhartonTXSupercharger",
-    "lat": 29.325153,
-    "lon": -96.124313
-  },
-  {
-    "uuid": "32793205",
-    "slug": "hustontxhempsteadroadsupercharger",
-    "lat": 29.91308,
-    "lon": -95.615888
-  },
-  {
-    "uuid": "32793213",
-    "slug": "18084",
-    "lat": 30.502829,
-    "lon": -97.580934
-  },
-  {
-    "uuid": "32793219",
-    "slug": "AlbuquerqueNMSupercharger2",
-    "lat": 35.1043,
-    "lon": -106.565943
-  },
-  {
-    "uuid": "32793233",
-    "slug": "AustinTXSupercharger10",
-    "lat": 30.226205,
-    "lon": -97.82193
-  },
-  {
-    "uuid": "32793249",
-    "slug": "SanAntonioTXAlamoHeightssupercharger",
-    "lat": 29.610496,
-    "lon": -98.488674
-  },
-  {
-    "uuid": "32793261",
-    "slug": "AustinTXCentralsupercharger",
-    "lat": 30.247179,
-    "lon": -97.750003
-  },
-  {
-    "uuid": "32793273",
-    "slug": "SoccoroNMsupercharger",
-    "lat": 34.071722,
-    "lon": -106.892959
-  },
-  {
-    "uuid": "32793289",
-    "slug": "BaytownTXSupercharger",
-    "lat": 29.801474,
-    "lon": -94.998058
-  },
-  {
-    "uuid": "32793299",
-    "slug": "20472",
-    "lat": 29.4289,
-    "lon": -95.0644
-  },
-  {
-    "uuid": "32793303",
-    "slug": "19044",
-    "lat": 31.429766,
-    "lon": -100.512491
-  },
-  {
-    "uuid": "32793313",
-    "slug": "19146",
-    "lat": 33.672459,
-    "lon": -95.52005
-  },
-  {
-    "uuid": "32793357",
-    "slug": "20309",
-    "lat": 29.650997,
-    "lon": -97.595652
-  },
-  {
-    "uuid": "32793361",
-    "slug": "19232",
-    "lat": 32.340654,
-    "lon": -108.713904
-  },
-  {
-    "uuid": "32793387",
-    "slug": "20485",
-    "lat": 33.178594,
-    "lon": -97.101533
-  },
-  {
-    "uuid": "32793391",
-    "slug": "25854",
-    "lat": 29.49712,
-    "lon": -98.482133
-  },
-  {
-    "uuid": "32793671",
-    "slug": "MountainVillageCOsupercharger",
-    "lat": 37.933397,
-    "lon": -107.854592
-  },
-  {
-    "uuid": "32793956",
-    "slug": "58765",
-    "lat": 32.151799,
-    "lon": -94.787308
-  },
-  {
-    "uuid": "32793975",
-    "slug": "32648",
-    "lat": 31.886436,
-    "lon": -106.580786
-  },
-  {
-    "uuid": "32794059",
-    "slug": "416259",
-    "lat": 38.871035,
-    "lon": -104.822445
-  },
-  {
-    "uuid": "32794061",
-    "slug": "58900",
-    "lat": 35.191789,
-    "lon": -101.722212
-  },
-  {
-    "uuid": "32794077",
-    "slug": "32367",
-    "lat": 32.578964,
-    "lon": -97.317692
-  },
-  {
-    "uuid": "32794105",
-    "slug": "412627",
-    "lat": 35.880089,
-    "lon": -97.395593
-  },
-  {
-    "uuid": "32794123",
-    "slug": "nashtx",
-    "lat": 33.452316,
-    "lon": -94.131086
-  },
-  {
-    "uuid": "32794153",
-    "slug": "26970",
-    "lat": 29.99713,
-    "lon": -95.57552
-  },
-  {
-    "uuid": "32794177",
-    "slug": "35400",
-    "lat": 33.102506,
-    "lon": -96.808687
-  },
-  {
-    "uuid": "32794183",
-    "slug": "58751",
-    "lat": 36.103781,
-    "lon": -95.912091
-  },
-  {
-    "uuid": "32794195",
-    "slug": "29612",
-    "lat": 39.748228,
-    "lon": -105.057764
-  },
-  {
-    "uuid": "32794221",
-    "slug": "26823",
-    "lat": 32.783342,
-    "lon": -97.273693
-  },
-  {
-    "uuid": "32794223",
-    "slug": "26969",
-    "lat": 29.580957,
-    "lon": -95.391909
-  },
-  {
-    "uuid": "32794245",
-    "slug": "402621",
-    "lat": 33.52775,
-    "lon": -101.871049
-  },
-  {
-    "uuid": "32794257",
-    "slug": "33908",
-    "lat": 32.406277,
-    "lon": -99.766841
-  },
-  {
-    "uuid": "32794259",
-    "slug": "brownsvilletxbocachicablvd",
-    "lat": 25.943927,
-    "lon": -97.429526
-  },
-  {
-    "uuid": "32794395",
-    "slug": "CollegeStationTXQ42022",
-    "lat": 30.612959,
-    "lon": -96.317135
-  },
-  {
-    "uuid": "32794407",
-    "slug": "26828",
-    "lat": 35.264578,
-    "lon": -101.830734
-  },
-  {
-    "uuid": "32794411",
-    "slug": "32766",
-    "lat": 30.214927,
-    "lon": -97.742312
-  },
-  {
-    "uuid": "32794475",
-    "slug": "403607",
-    "lat": 29.185201,
-    "lon": -98.844916
-  },
-  {
-    "uuid": "32794495",
-    "slug": "31117",
-    "lat": 38.965713,
-    "lon": -104.785245
-  },
-  {
-    "uuid": "32794507",
-    "slug": "27055",
-    "lat": 32.440581,
-    "lon": -95.137062
-  },
-  {
-    "uuid": "32794549",
-    "slug": "402203",
-    "lat": 40.617725,
-    "lon": -103.181034
-  },
-  {
-    "uuid": "32794563",
-    "slug": "58726",
-    "lat": 33.134345,
-    "lon": -96.055096
-  },
-  {
-    "uuid": "32794565",
-    "slug": "59081",
-    "lat": 38.763963,
-    "lon": -102.790932
-  },
-  {
-    "uuid": "32794567",
-    "slug": "403157",
-    "lat": 30.200095,
-    "lon": -97.767168
-  },
-  {
-    "uuid": "32794571",
-    "slug": "408203",
-    "lat": 30.376938,
-    "lon": -96.068166
-  },
-  {
-    "uuid": "32794597",
-    "slug": "27129",
-    "lat": 31.706223,
-    "lon": -98.122215
-  },
-  {
-    "uuid": "32794617",
-    "slug": "26974",
-    "lat": 28.445995,
-    "lon": -99.243522
-  },
-  {
-    "uuid": "32794932",
-    "slug": "19099",
-    "lat": 31.0728,
-    "lon": -97.661556
-  },
-  {
-    "uuid": "32795595",
-    "slug": "26635",
-    "lat": 29.778898,
-    "lon": -95.559446
-  },
-  {
-    "uuid": "32795906",
-    "slug": "WallerTXSupercharger",
-    "lat": 30.070749,
-    "lon": -95.930802
-  },
-  {
-    "uuid": "32797073",
-    "slug": "58746",
-    "lat": 32.727658,
-    "lon": -97.364482
-  },
-  {
-    "uuid": "32797141",
-    "slug": "58717",
-    "lat": 32.763049,
-    "lon": -97.166805
-  },
-  {
-    "uuid": "32797220",
-    "slug": "32612",
-    "lat": 29.432158,
-    "lon": -98.482699
-  },
-  {
-    "uuid": "32797318",
-    "slug": "McKinneyTX2Q42022",
-    "lat": 33.151846,
-    "lon": -96.717142
-  },
-  {
-    "uuid": "32797945",
-    "slug": "403408",
-    "lat": 39.797522,
-    "lon": -105.07872
-  },
-  {
-    "uuid": "32798001",
-    "slug": "437163",
-    "lat": 29.692891,
-    "lon": -96.777389
-  },
-  {
-    "uuid": "32798026",
-    "slug": "GrapevineTXsupercharger",
-    "lat": 32.941969,
-    "lon": -97.065631
-  },
-  {
-    "uuid": "32798028",
-    "slug": "32654",
-    "lat": 30.140394,
-    "lon": -96.399349
-  },
-  {
-    "uuid": "32798683",
-    "slug": "418116",
-    "lat": 37.271964,
-    "lon": -107.883424
-  },
-  {
-    "uuid": "32798757",
-    "slug": "401980",
-    "lat": 37.349684,
-    "lon": -108.566253
-  },
-  {
-    "uuid": "32799932",
-    "slug": "27134",
-    "lat": 36.068138,
-    "lon": -95.780551
-  },
-  {
-    "uuid": "32803173",
-    "slug": "DallasTXsupercharger",
-    "lat": 32.867744,
-    "lon": -96.767178
-  },
-  {
-    "uuid": "32803179",
-    "slug": "kremmlingcoparkavenuesupercharger",
-    "lat": 40.059633,
-    "lon": -106.387909
-  },
-  {
-    "uuid": "32803297",
-    "slug": "houstonsupercharger",
-    "lat": 29.735994,
-    "lon": -95.538444
-  },
-  {
-    "uuid": "32803305",
-    "slug": "ClaytonNMsupercharger",
-    "lat": 36.449453,
-    "lon": -103.181919
-  },
-  {
-    "uuid": "32803313",
-    "slug": "clarksvillesupercharger",
-    "lat": 35.523754,
-    "lon": -93.863571
-  },
-  {
-    "uuid": "32803323",
-    "slug": "WestminsterCOsupercharger",
-    "lat": 39.832098,
-    "lon": -105.023935
-  },
-  {
-    "uuid": "32803483",
-    "slug": "RedOakTXSupercharger",
-    "lat": 32.516874,
-    "lon": -96.821522
-  },
-  {
-    "uuid": "32803487",
-    "slug": "abbotttxsupercharger",
-    "lat": 31.898879,
-    "lon": -97.090962
-  },
-  {
-    "uuid": "32803509",
-    "slug": "EnnisTXQ322",
-    "lat": 32.322578,
-    "lon": -96.605087
-  },
-  {
-    "uuid": "32803519",
-    "slug": "19218",
-    "lat": 36.054286,
-    "lon": -96.004607
-  },
-  {
-    "uuid": "32803525",
-    "slug": "centervilletxsupercharger",
-    "lat": 31.259686,
-    "lon": -95.985294
-  },
-  {
-    "uuid": "32803533",
-    "slug": "johnsoncitytxus281supercharger",
-    "lat": 30.269924,
-    "lon": -98.398071
-  },
-  {
-    "uuid": "32803547",
-    "slug": "19117",
-    "lat": 29.612994,
-    "lon": -98.601275
-  },
-  {
-    "uuid": "32803561",
-    "slug": "19222",
-    "lat": 34.161543,
-    "lon": -99.297446
-  },
-  {
-    "uuid": "32803565",
-    "slug": "KatyTXQ322",
-    "lat": 29.779068,
-    "lon": -95.848861
-  },
-  {
-    "uuid": "32803577",
-    "slug": "19226",
-    "lat": 26.159998,
-    "lon": -97.877651
-  },
-  {
-    "uuid": "32803581",
-    "slug": "18976",
-    "lat": 30.356828,
-    "lon": -103.653122
-  },
-  {
-    "uuid": "32803585",
-    "slug": "19339",
-    "lat": 32.557695,
-    "lon": -93.707353
-  },
-  {
-    "uuid": "32803591",
-    "slug": "19073",
-    "lat": 35.183029,
-    "lon": -107.898154
-  },
-  {
-    "uuid": "32803593",
-    "slug": "18997",
-    "lat": 40.031523,
-    "lon": -105.257355
-  },
-  {
-    "uuid": "32803595",
-    "slug": "19144",
-    "lat": 30.706458,
-    "lon": -101.202558
-  },
-  {
-    "uuid": "32803599",
-    "slug": "CedarParkTXSupercharger",
-    "lat": 30.525714,
-    "lon": -97.819321
-  },
-  {
-    "uuid": "32803625",
-    "slug": "19083",
-    "lat": 29.758579,
-    "lon": -94.929995
-  },
-  {
-    "uuid": "32803637",
-    "slug": "HarlingenTXSupercharger",
-    "lat": 26.187903,
-    "lon": -97.756415
-  },
-  {
-    "uuid": "32803645",
-    "slug": "19064",
-    "lat": 32.663597,
-    "lon": -97.331564
-  },
-  {
-    "uuid": "32803667",
-    "slug": "20483",
-    "lat": 33.023187,
-    "lon": -97.279119
-  },
-  {
-    "uuid": "32803693",
-    "slug": "18980",
-    "lat": 32.670218,
-    "lon": -97.113481
-  },
-  {
-    "uuid": "32803753",
-    "slug": "HoustonTX1Q42022",
-    "lat": 29.740627,
-    "lon": -95.645796
-  },
-  {
-    "uuid": "32803771",
-    "slug": "32767",
-    "lat": 30.403726,
-    "lon": -97.673309
-  },
-  {
-    "uuid": "32803785",
-    "slug": "32616",
-    "lat": 32.770984,
-    "lon": -96.87335
-  },
-  {
-    "uuid": "32803807",
-    "slug": "27100",
-    "lat": 33.634777,
-    "lon": -97.154815
-  },
-  {
-    "uuid": "32803831",
-    "slug": "McKinneyTX1Q42022",
-    "lat": 33.217467,
-    "lon": -96.657195
-  },
-  {
-    "uuid": "32803845",
-    "slug": "AddisonTXQ322",
-    "lat": 32.950181,
-    "lon": -96.81855
-  },
-  {
-    "uuid": "32803849",
-    "slug": "27102",
-    "lat": 34.188748,
-    "lon": -101.749154
-  },
-  {
-    "uuid": "32803869",
-    "slug": "32776",
-    "lat": 39.522778,
-    "lon": -107.774449
-  },
-  {
-    "uuid": "32803879",
-    "slug": "32760",
-    "lat": 30.814366,
-    "lon": -97.610371
-  },
-  {
-    "uuid": "32803915",
-    "slug": "30884",
-    "lat": 32.296645,
-    "lon": -106.812591
-  },
-  {
-    "uuid": "32804414",
-    "slug": "4003014",
-    "lat": 36.880188,
-    "lon": -104.439329
+    "uuid": "32789752",
+    "slug": "479056",
+    "lat": 40.376967,
+    "lon": -104.7329251,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32789996",
+    "slug": "415254",
+    "lat": 29.7839667,
+    "lon": -95.112674,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32789997",
+    "slug": "dc562",
+    "lat": 32.7675371,
+    "lon": -96.7962415,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32789998",
+    "slug": "52787",
+    "lat": 29.639955,
+    "lon": -95.588039,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790009",
+    "slug": "dc19787",
+    "lat": 29.579073,
+    "lon": -95.383683,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790013",
+    "slug": "dc43586",
+    "lat": 29.2154821,
+    "lon": -99.76972,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790082",
+    "slug": "447153",
+    "lat": 32.7438181,
+    "lon": -97.6567211,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790083",
+    "slug": "446258",
+    "lat": 32.7056218,
+    "lon": -97.3599828,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790087",
+    "slug": "456503",
+    "lat": 35.005717,
+    "lon": -106.0366352,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790095",
+    "slug": "473916",
+    "lat": 29.8369255,
+    "lon": -95.4845892,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790098",
+    "slug": "473625",
+    "lat": 33.0416264,
+    "lon": -96.7361735,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790102",
+    "slug": "449454",
+    "lat": 29.2850905,
+    "lon": -94.8575975,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790116",
+    "slug": "450316",
+    "lat": 31.7194184,
+    "lon": -98.983177,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790128",
+    "slug": "449154",
+    "lat": 39.8022074,
+    "lon": -105.1088553,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790132",
+    "slug": "452859",
+    "lat": 30.400525,
+    "lon": -97.6750383,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790140",
+    "slug": "459169",
+    "lat": 29.4905947,
+    "lon": -98.400048,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790149",
+    "slug": "476452",
+    "lat": 36.0676393,
+    "lon": -95.861335,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790168",
+    "slug": "459662",
+    "lat": 33.2048033,
+    "lon": -96.8250595,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790172",
+    "slug": "461029",
+    "lat": 32.745167,
+    "lon": -96.4557844,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790181",
+    "slug": "450668",
+    "lat": 26.1642268,
+    "lon": -97.6844377,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790182",
+    "slug": "450708",
+    "lat": 35.1933467,
+    "lon": -101.8678393,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790187",
+    "slug": "450255",
+    "lat": 36.3742371,
+    "lon": -94.2093307,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790194",
+    "slug": "458310",
+    "lat": 32.534195,
+    "lon": -96.664689,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790198",
+    "slug": "466714",
+    "lat": 32.4309252,
+    "lon": -96.820976,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790200",
+    "slug": "467709",
+    "lat": 29.4187188,
+    "lon": -98.4912796,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32790269",
+    "slug": "dc15203",
+    "lat": 39.604058,
+    "lon": -106.518074,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790280",
+    "slug": "dc15854",
+    "lat": 40.371497,
+    "lon": -105.524215,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790281",
+    "slug": "dc1588",
+    "lat": 32.776235,
+    "lon": -96.809281,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790293",
+    "slug": "dc20703",
+    "lat": 27.451425,
+    "lon": -99.518638,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790352",
+    "slug": "dc2858",
+    "lat": 30.395505,
+    "lon": -95.637548,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790362",
+    "slug": "dc34169",
+    "lat": 36.1385333,
+    "lon": -95.9881492,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790405",
+    "slug": "dc12490",
+    "lat": 29.602679,
+    "lon": -98.62229,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790407",
+    "slug": "dc12512",
+    "lat": 27.80259,
+    "lon": -97.453946,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790423",
+    "slug": "dc13222",
+    "lat": 39.475511,
+    "lon": -106.050167,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790454",
+    "slug": "dc217",
+    "lat": 39.63341,
+    "lon": -106.52428,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790464",
+    "slug": "dc2155",
+    "lat": 39.186714,
+    "lon": -106.819164,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790509",
+    "slug": "dc29872",
+    "lat": 30.225301,
+    "lon": -98.785331,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790511",
+    "slug": "dc30295",
+    "lat": 29.041398,
+    "lon": -96.516627,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790515",
+    "slug": "dc30095",
+    "lat": 39.639798,
+    "lon": -106.375328,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790554",
+    "slug": "teslafortworth1012burnettst",
+    "lat": 32.7480976,
+    "lon": -97.3344742,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790589",
+    "slug": "dc14742",
+    "lat": 29.430796,
+    "lon": -98.489854,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790658",
+    "slug": "dc29402",
+    "lat": 27.4619389,
+    "lon": -99.5179061,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790723",
+    "slug": "dc13066",
+    "lat": 35.171801,
+    "lon": -103.717137,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790726",
+    "slug": "dc12639",
+    "lat": 39.297786,
+    "lon": -102.606879,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790730",
+    "slug": "dc12946",
+    "lat": 37.935718,
+    "lon": -107.846759,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790838",
+    "slug": "dc32542",
+    "lat": 28.662662,
+    "lon": -106.127617,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32790839",
+    "slug": "dc35839",
+    "lat": 31.713131,
+    "lon": -106.394422,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791011",
+    "slug": "dc31056",
+    "lat": 30.524131,
+    "lon": -97.817548,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791024",
+    "slug": "dc36176",
+    "lat": 30.2560759,
+    "lon": -97.8697259,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791025",
+    "slug": "dc37232",
+    "lat": 35.4481856,
+    "lon": -97.5966422,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791037",
+    "slug": "dc49010",
+    "lat": 40.151155,
+    "lon": -105.115307,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791057",
+    "slug": "dc15509",
+    "lat": 29.777438,
+    "lon": -95.96685,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791077",
+    "slug": "dc18411",
+    "lat": 33.107313,
+    "lon": -96.676484,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791081",
+    "slug": "dc18156",
+    "lat": 32.887017,
+    "lon": -96.768894,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791082",
+    "slug": "dc1888",
+    "lat": 39.640059,
+    "lon": -106.371498,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791110",
+    "slug": "dc226",
+    "lat": 30.5642077,
+    "lon": -96.2665727,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791118",
+    "slug": "dc22394",
+    "lat": 29.422799,
+    "lon": -98.493049,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791127",
+    "slug": "dc26707",
+    "lat": 39.626518,
+    "lon": -104.901761,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791130",
+    "slug": "dc26524",
+    "lat": 39.554428,
+    "lon": -104.876384,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791132",
+    "slug": "dc29136",
+    "lat": 29.13582,
+    "lon": -98.146748,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791158",
+    "slug": "dc39164",
+    "lat": 35.509773,
+    "lon": -97.969936,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791186",
+    "slug": "dc11153",
+    "lat": 27.6281711,
+    "lon": -97.2232362,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791188",
+    "slug": "dc11464",
+    "lat": 35.685123,
+    "lon": -105.937455,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791229",
+    "slug": "dc19003",
+    "lat": 35.190964,
+    "lon": -101.931012,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791282",
+    "slug": "dc27475",
+    "lat": 33.3312429,
+    "lon": -105.6767213,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791339",
+    "slug": "dc42631",
+    "lat": 32.765875,
+    "lon": -96.876091,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791341",
+    "slug": "dc42477",
+    "lat": 35.682345,
+    "lon": -105.945457,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791356",
+    "slug": "dc12082",
+    "lat": 39.63943,
+    "lon": -106.368139,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791363",
+    "slug": "dc13278",
+    "lat": 27.803051,
+    "lon": -97.45418,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791371",
+    "slug": "dc13275",
+    "lat": 39.749998,
+    "lon": -104.991988,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791403",
+    "slug": "dc20242",
+    "lat": 32.2727945,
+    "lon": -95.3400216,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791406",
+    "slug": "dc19267",
+    "lat": 39.673477,
+    "lon": -104.830477,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791428",
+    "slug": "dc2397",
+    "lat": 37.269852,
+    "lon": -107.885496,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791432",
+    "slug": "dc24081",
+    "lat": 30.440841,
+    "lon": -97.779967,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791478",
+    "slug": "dc40023",
+    "lat": 29.885038,
+    "lon": -97.940158,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791480",
+    "slug": "dc3973",
+    "lat": 29.426547,
+    "lon": -98.481086,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791485",
+    "slug": "dc4039",
+    "lat": 29.4172627,
+    "lon": -98.4926587,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791500",
+    "slug": "teslasanantonio112collegest",
+    "lat": 29.4254459,
+    "lon": -98.4905491,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791503",
+    "slug": "dc11808",
+    "lat": 30.392202,
+    "lon": -97.750038,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791536",
+    "slug": "dc16955",
+    "lat": 32.922242,
+    "lon": -96.9759,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791539",
+    "slug": "dc17125",
+    "lat": 38.833714,
+    "lon": -104.826672,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791545",
+    "slug": "dc16954",
+    "lat": 32.926755,
+    "lon": -96.801658,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791547",
+    "slug": "dc17563",
+    "lat": 27.675861,
+    "lon": -97.304879,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791571",
+    "slug": "dc23683",
+    "lat": 32.826111,
+    "lon": -96.847006,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791578",
+    "slug": "dc23595",
+    "lat": 29.253198,
+    "lon": -94.851373,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791582",
+    "slug": "dc23406",
+    "lat": 29.656804,
+    "lon": -95.027872,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791588",
+    "slug": "dc25192",
+    "lat": 35.510883,
+    "lon": -97.97023,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791589",
+    "slug": "dc25352",
+    "lat": 31.7193661,
+    "lon": -106.3025164,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791590",
+    "slug": "dc25769",
+    "lat": 38.900381,
+    "lon": -106.966694,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791594",
+    "slug": "dc25709",
+    "lat": 30.629312,
+    "lon": -96.334004,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791611",
+    "slug": "dc32062",
+    "lat": 40.469556,
+    "lon": -106.824093,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791635",
+    "slug": "dc4628",
+    "lat": 29.2730722,
+    "lon": -94.8518956,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791666",
+    "slug": "52712",
+    "lat": 31.559364,
+    "lon": -97.12818,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791668",
+    "slug": "52752",
+    "lat": 29.736559,
+    "lon": -95.578191,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791718",
+    "slug": "4006663",
+    "lat": 27.8997908,
+    "lon": -97.1427105,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791736",
+    "slug": "443357",
+    "lat": 35.3481704,
+    "lon": -97.5136575,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791737",
+    "slug": "443460",
+    "lat": 35.2383596,
+    "lon": -96.6720702,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791759",
+    "slug": "dc863383659",
+    "lat": 30.26208,
+    "lon": -97.73814,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791772",
+    "slug": "dc850282068",
+    "lat": 30.11972,
+    "lon": -95.43308,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791829",
+    "slug": "400503",
+    "lat": 31.545183,
+    "lon": -97.128551,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791834",
+    "slug": "417171",
+    "lat": 30.2694884,
+    "lon": -97.7456708,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791841",
+    "slug": "441603",
+    "lat": 32.8140663,
+    "lon": -97.4096795,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791849",
+    "slug": "dc75055",
+    "lat": 30.270818,
+    "lon": -98.869207,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791866",
+    "slug": "dc5974",
+    "lat": 30.546511,
+    "lon": -98.360596,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791897",
+    "slug": "dc613",
+    "lat": 39.1866234,
+    "lon": -106.8175696,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791922",
+    "slug": "4005363",
+    "lat": 32.7995167,
+    "lon": -96.8047489,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791931",
+    "slug": "419713",
+    "lat": 30.9022217,
+    "lon": -102.9042984,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791933",
+    "slug": "418563",
+    "lat": 30.3495605,
+    "lon": -103.6930362,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32791948",
+    "slug": "dc863393413",
+    "lat": 30.2628141,
+    "lon": -97.741677,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791973",
+    "slug": "52644",
+    "lat": 28.546106,
+    "lon": -99.843991,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791993",
+    "slug": "54486",
+    "lat": 28.041186,
+    "lon": -97.057717,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32791998",
+    "slug": "54477",
+    "lat": 29.7312956,
+    "lon": -99.0792105,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792005",
+    "slug": "dc682",
+    "lat": 39.1867406,
+    "lon": -106.8215018,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792053",
+    "slug": "439658",
+    "lat": 32.3209636,
+    "lon": -106.748101,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792059",
+    "slug": "dc5898",
+    "lat": 40.521984,
+    "lon": -105.02307,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792067",
+    "slug": "52304",
+    "lat": 27.7578,
+    "lon": -97.46041,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792095",
+    "slug": "dc561",
+    "lat": 33.0889411,
+    "lon": -96.8062995,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792098",
+    "slug": "54597",
+    "lat": 38.797561,
+    "lon": -104.792491,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792101",
+    "slug": "dc85939",
+    "lat": 28.699859,
+    "lon": -100.562326,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792103",
+    "slug": "55232",
+    "lat": 32.96061,
+    "lon": -96.63871,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792132",
+    "slug": "409373",
+    "lat": 36.2294874,
+    "lon": -95.3389694,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792133",
+    "slug": "409443",
+    "lat": 40.521946,
+    "lon": -105.051677,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792135",
+    "slug": "426459",
+    "lat": 38.4970871,
+    "lon": -105.320849,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792137",
+    "slug": "426016",
+    "lat": 38.7898799,
+    "lon": -104.726023,
+    "locationType": [
+      "destination_charger_nontesla",
+      "self_serve_demo_drive"
+    ]
+  },
+  {
+    "uuid": "32792163",
+    "slug": "dc62440",
+    "lat": 32.793507,
+    "lon": -96.778001,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792197",
+    "slug": "dc40164",
+    "lat": 33.145167,
+    "lon": -96.824985,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792237",
+    "slug": "422949",
+    "lat": 32.4455915,
+    "lon": -93.7232166,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792240",
+    "slug": "422600",
+    "lat": 30.4175516,
+    "lon": -97.7489787,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792244",
+    "slug": "424069",
+    "lat": 26.2003558,
+    "lon": -98.2620646,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792246",
+    "slug": "421267",
+    "lat": 39.5696512,
+    "lon": -104.8676268,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792247",
+    "slug": "422664",
+    "lat": 33.0432788,
+    "lon": -97.0662304,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792264",
+    "slug": "52395",
+    "lat": 29.754295,
+    "lon": -95.362575,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792299",
+    "slug": "54962",
+    "lat": 40.0152234,
+    "lon": -105.2085706,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792335",
+    "slug": "433854",
+    "lat": 35.1005439,
+    "lon": -106.5616477,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792336",
+    "slug": "429854",
+    "lat": 35.051765,
+    "lon": -106.631443,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792420",
+    "slug": "teslaaustin8212bartonclubdraustintx78735omnibartoncreekresortspa",
+    "lat": 30.29124,
+    "lon": -97.85832,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32792431",
+    "slug": "409467",
+    "lat": 32.915896,
+    "lon": -96.7732501,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792433",
+    "slug": "409478",
+    "lat": 30.2075736,
+    "lon": -98.1286851,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32792436",
+    "slug": "428054",
+    "lat": 32.1445512,
+    "lon": -96.0912613,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32793912",
+    "slug": "teslasanantonio607salamost",
+    "lat": 29.4176314,
+    "lon": -98.4885653,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32794966",
+    "slug": "dc13814",
+    "lat": 32.911856,
+    "lon": -96.445093,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32794975",
+    "slug": "dc14804",
+    "lat": 26.086101,
+    "lon": -97.161711,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32794999",
+    "slug": "dc1071",
+    "lat": 33.088507,
+    "lon": -96.839327,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795016",
+    "slug": "dc13460",
+    "lat": 29.741523,
+    "lon": -95.456936,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795053",
+    "slug": "dc12890",
+    "lat": 29.327509,
+    "lon": -96.119565,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795085",
+    "slug": "dc12902",
+    "lat": 29.684177,
+    "lon": -95.422822,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795091",
+    "slug": "dc12579",
+    "lat": 39.475852,
+    "lon": -106.053193,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795102",
+    "slug": "dc15204",
+    "lat": 35.508796,
+    "lon": -97.971365,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795103",
+    "slug": "dc14325",
+    "lat": 32.913497,
+    "lon": -97.009805,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795141",
+    "slug": "dc21369",
+    "lat": 30.302371,
+    "lon": -104.020604,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795145",
+    "slug": "dc21152",
+    "lat": 29.60206,
+    "lon": -97.950029,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795147",
+    "slug": "dc2063",
+    "lat": 39.567662,
+    "lon": -104.867708,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795166",
+    "slug": "dc27171",
+    "lat": 29.78184,
+    "lon": -95.559549,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795169",
+    "slug": "dc26639",
+    "lat": 40.062531,
+    "lon": -105.204787,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795177",
+    "slug": "dc26447",
+    "lat": 26.201662,
+    "lon": -98.261791,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795227",
+    "slug": "dc16959",
+    "lat": 33.070665,
+    "lon": -96.865057,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795235",
+    "slug": "dc19898",
+    "lat": 29.309704,
+    "lon": -94.790271,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795296",
+    "slug": "dc29881",
+    "lat": 35.84727,
+    "lon": -101.974035,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795345",
+    "slug": "dc21333",
+    "lat": 36.127464,
+    "lon": -97.055908,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795356",
+    "slug": "dc24100",
+    "lat": 30.396418,
+    "lon": -97.931356,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795361",
+    "slug": "dc2296",
+    "lat": 40.001616,
+    "lon": -105.257982,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795385",
+    "slug": "dc35840",
+    "lat": 31.738139,
+    "lon": -106.434018,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795403",
+    "slug": "dc37438",
+    "lat": 39.0693962,
+    "lon": -108.1507337,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795410",
+    "slug": "dc36534",
+    "lat": 35.381067,
+    "lon": -97.058179,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795420",
+    "slug": "dc1807",
+    "lat": 32.864472,
+    "lon": -96.541511,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795421",
+    "slug": "dc18764",
+    "lat": 32.824473,
+    "lon": -97.059412,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795495",
+    "slug": "dc2824",
+    "lat": 37.260149,
+    "lon": -108.494074,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795498",
+    "slug": "dc28333",
+    "lat": 39.596408,
+    "lon": -104.884219,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795506",
+    "slug": "dc28820",
+    "lat": 38.900908,
+    "lon": -106.967755,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795521",
+    "slug": "dc42479",
+    "lat": 29.473895,
+    "lon": -98.462295,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795532",
+    "slug": "dc42642",
+    "lat": 40.017573,
+    "lon": -105.259635,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795770",
+    "slug": "dc2137",
+    "lat": 35.192673,
+    "lon": -101.932979,
+    "locationType": [
+      "destination_charger_nontesla",
+      "self_serve_demo_drive"
+    ]
+  },
+  {
+    "uuid": "32795779",
+    "slug": "dc12794",
+    "lat": 30.633489,
+    "lon": -96.323218,
+    "locationType": [
+      "destination_charger",
+      "self_serve_demo_drive"
+    ]
+  },
+  {
+    "uuid": "32795832",
+    "slug": "dc5169",
+    "lat": 29.8708932,
+    "lon": -96.4644899,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795861",
+    "slug": "dc40162",
+    "lat": 33.146219,
+    "lon": -96.82591,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795874",
+    "slug": "409468",
+    "lat": 36.1679707,
+    "lon": -95.7606892,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795935",
+    "slug": "51134",
+    "lat": 30.275675,
+    "lon": -97.708232,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795958",
+    "slug": "dc684",
+    "lat": 39.19082,
+    "lon": -106.819492,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32795998",
+    "slug": "55457",
+    "lat": 30.318987,
+    "lon": -97.986484,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32796066",
+    "slug": "dc25991",
+    "lat": 31.736807,
+    "lon": -106.450756,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32796084",
+    "slug": "dc25161",
+    "lat": 26.926081,
+    "lon": -101.419847,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32796111",
+    "slug": "dc325",
+    "lat": 30.259012,
+    "lon": -97.747352,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32796113",
+    "slug": "dc32634",
+    "lat": 36.465716,
+    "lon": -105.661428,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32796150",
+    "slug": "dc54495",
+    "lat": 40.474278,
+    "lon": -104.891562,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32799766",
+    "slug": "dc25147",
+    "lat": 28.63185,
+    "lon": -106.098402,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32799933",
+    "slug": "dc31869",
+    "lat": 35.293464,
+    "lon": -97.490495,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32799944",
+    "slug": "dc843233289",
+    "lat": 30.2380422,
+    "lon": -97.7559031,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32799945",
+    "slug": "dc918109220",
+    "lat": 27.7577654,
+    "lon": -97.4604065,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800026",
+    "slug": "449403",
+    "lat": 31.7742319,
+    "lon": -95.6210937,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800029",
+    "slug": "454909",
+    "lat": 35.3375105,
+    "lon": -94.3765164,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800036",
+    "slug": "466404",
+    "lat": 39.7514069,
+    "lon": -104.8775173,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800037",
+    "slug": "464503",
+    "lat": 39.8230476,
+    "lon": -104.7755715,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800046",
+    "slug": "427854",
+    "lat": 30.226976,
+    "lon": -98.913766,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800047",
+    "slug": "427952",
+    "lat": 36.3047309,
+    "lon": -95.3199716,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800048",
+    "slug": "429512",
+    "lat": 35.1471329,
+    "lon": -106.5291071,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800052",
+    "slug": "444402",
+    "lat": 34.629394,
+    "lon": -98.492954,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800065",
+    "slug": "469653",
+    "lat": 29.6072805,
+    "lon": -98.5194839,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800067",
+    "slug": "481261",
+    "lat": 30.3155929,
+    "lon": -97.9455743,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800083",
+    "slug": "456803",
+    "lat": 32.7495404,
+    "lon": -96.4308526,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800094",
+    "slug": "481717",
+    "lat": 30.5727724,
+    "lon": -97.6867525,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800102",
+    "slug": "442307",
+    "lat": 30.1758578,
+    "lon": -95.4649294,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800105",
+    "slug": "443254",
+    "lat": 28.7132975,
+    "lon": -96.2256212,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800107",
+    "slug": "442506",
+    "lat": 26.1653317,
+    "lon": -97.6880067,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800108",
+    "slug": "444412",
+    "lat": 27.7972134,
+    "lon": -97.4146372,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800123",
+    "slug": "467602",
+    "lat": 32.2905275,
+    "lon": -106.7409467,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800124",
+    "slug": "467654",
+    "lat": 29.561238,
+    "lon": -98.585838,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800138",
+    "slug": "426054",
+    "lat": 29.5649912,
+    "lon": -95.0455982,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800139",
+    "slug": "455019",
+    "lat": 29.0397633,
+    "lon": -95.4460046,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800150",
+    "slug": "445805",
+    "lat": 33.3646512,
+    "lon": -97.1790833,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800151",
+    "slug": "458413",
+    "lat": 36.3083722,
+    "lon": -94.1905914,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800155",
+    "slug": "451762",
+    "lat": 30.5610457,
+    "lon": -98.2768143,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800212",
+    "slug": "441481",
+    "lat": 32.893227,
+    "lon": -96.479773,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800213",
+    "slug": "441902",
+    "lat": 33.8228579,
+    "lon": -96.707887,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800216",
+    "slug": "441073",
+    "lat": 29.0179579,
+    "lon": -95.4342567,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800224",
+    "slug": "457553",
+    "lat": 35.3643115,
+    "lon": -97.5471911,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800225",
+    "slug": "462781",
+    "lat": 34.1669482,
+    "lon": -94.7606282,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800230",
+    "slug": "475557",
+    "lat": 33.1104974,
+    "lon": -96.8258178,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800243",
+    "slug": "447604",
+    "lat": 30.0553809,
+    "lon": -95.6933459,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800245",
+    "slug": "447002",
+    "lat": 30.4353326,
+    "lon": -97.5732997,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800255",
+    "slug": "458780",
+    "lat": 29.731008,
+    "lon": -95.3892348,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800258",
+    "slug": "472152",
+    "lat": 35.1678146,
+    "lon": -106.5871019,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800261",
+    "slug": "472658",
+    "lat": 32.9802738,
+    "lon": -96.7072417,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800524",
+    "slug": "dc15224",
+    "lat": 29.793368,
+    "lon": -95.729374,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800618",
+    "slug": "dc30517",
+    "lat": 28.98298,
+    "lon": -95.984724,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800656",
+    "slug": "tesladallas2320nhoustonst",
+    "lat": 32.785286,
+    "lon": -96.80819,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800695",
+    "slug": "dc16957",
+    "lat": 33.11674,
+    "lon": -96.667297,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800749",
+    "slug": "dc253",
+    "lat": 29.422161,
+    "lon": -98.484552,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800750",
+    "slug": "dc25017",
+    "lat": 30.26662,
+    "lon": -97.740375,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800751",
+    "slug": "dc25238",
+    "lat": 29.427283,
+    "lon": -98.489125,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800752",
+    "slug": "dc24673",
+    "lat": 33.062756,
+    "lon": -96.831498,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800765",
+    "slug": "dc25470",
+    "lat": 30.259977,
+    "lon": -97.739149,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800837",
+    "slug": "dc13779",
+    "lat": 34.172565,
+    "lon": -97.16145,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800857",
+    "slug": "dc1775",
+    "lat": 31.734028,
+    "lon": -95.6294049,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32800864",
+    "slug": "dc17566",
+    "lat": 32.810335,
+    "lon": -96.72919,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800903",
+    "slug": "dc23116",
+    "lat": 26.9002053,
+    "lon": -101.4264863,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800946",
+    "slug": "dc32699",
+    "lat": 39.804696,
+    "lon": -104.686605,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800947",
+    "slug": "dc327",
+    "lat": 36.731887,
+    "lon": -108.199882,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800949",
+    "slug": "dc32783",
+    "lat": 29.744261,
+    "lon": -95.458778,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32800953",
+    "slug": "dc4091",
+    "lat": 36.4108594,
+    "lon": -93.7347888,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801044",
+    "slug": "dc19260",
+    "lat": 33.101983,
+    "lon": -96.817299,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801082",
+    "slug": "dc274",
+    "lat": 32.792269,
+    "lon": -96.803141,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801110",
+    "slug": "dc34465",
+    "lat": 29.052594,
+    "lon": -95.457053,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32801119",
+    "slug": "dc40643",
+    "lat": 35.9956505,
+    "lon": -96.1297445,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801155",
+    "slug": "dc14803",
+    "lat": 26.138358,
+    "lon": -97.170299,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801195",
+    "slug": "dc21313",
+    "lat": 31.787438,
+    "lon": -106.408404,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801198",
+    "slug": "dc2129",
+    "lat": 30.283018,
+    "lon": -97.745736,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801221",
+    "slug": "dc25913",
+    "lat": 28.627759,
+    "lon": -106.117038,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801301",
+    "slug": "dc12133",
+    "lat": 27.853747,
+    "lon": -97.629734,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801340",
+    "slug": "dc18599",
+    "lat": 39.115307,
+    "lon": -108.535576,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801344",
+    "slug": "dc18877",
+    "lat": 29.928071,
+    "lon": -95.545954,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801345",
+    "slug": "dc1821",
+    "lat": 39.480486,
+    "lon": -106.066908,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801457",
+    "slug": "dc11587",
+    "lat": 39.626647,
+    "lon": -104.896197,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801470",
+    "slug": "dc12948",
+    "lat": 37.938809,
+    "lon": -107.848019,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801500",
+    "slug": "dc1904",
+    "lat": 27.696245,
+    "lon": -97.349457,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801508",
+    "slug": "dc18911",
+    "lat": 32.785831,
+    "lon": -96.801945,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801548",
+    "slug": "dc23961",
+    "lat": 27.900089,
+    "lon": -97.143324,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801554",
+    "slug": "dc25715",
+    "lat": 29.78641,
+    "lon": -95.526882,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801558",
+    "slug": "dc26559",
+    "lat": 27.744438,
+    "lon": -97.442593,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801564",
+    "slug": "dc25883",
+    "lat": 27.816671,
+    "lon": -97.076412,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801570",
+    "slug": "dc29499",
+    "lat": 29.783327,
+    "lon": -95.467074,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801574",
+    "slug": "dc29438",
+    "lat": 33.591025,
+    "lon": -101.867768,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801632",
+    "slug": "dc1555",
+    "lat": 29.747099,
+    "lon": -95.450734,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801633",
+    "slug": "dc15429",
+    "lat": 32.3248785,
+    "lon": -106.7341411,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32801682",
+    "slug": "dc21573",
+    "lat": 40.390787,
+    "lon": -105.562663,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801688",
+    "slug": "dc22106",
+    "lat": 29.757377,
+    "lon": -95.377384,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801729",
+    "slug": "dc28807",
+    "lat": 35.839881,
+    "lon": -101.974378,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801749",
+    "slug": "dc36969",
+    "lat": 29.7751215,
+    "lon": -98.7275911,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801752",
+    "slug": "dc36967",
+    "lat": 36.153979,
+    "lon": -95.988095,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801769",
+    "slug": "dc41898",
+    "lat": 30.086525,
+    "lon": -95.63449,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801778",
+    "slug": "dc6022",
+    "lat": 38.74743,
+    "lon": -105.17518,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801826",
+    "slug": "dc5925",
+    "lat": 35.084183,
+    "lon": -106.690044,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801866",
+    "slug": "dc4006503",
+    "lat": 40.0161241,
+    "lon": -105.2601208,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32801873",
+    "slug": "4006757",
+    "lat": 35.141918,
+    "lon": -106.598992,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32801892",
+    "slug": "422865",
+    "lat": 29.6755411,
+    "lon": -95.0331018,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32801897",
+    "slug": "dc5109",
+    "lat": 29.9951,
+    "lon": -98.100622,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801927",
+    "slug": "dc734",
+    "lat": 30.26197,
+    "lon": -97.742421,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801959",
+    "slug": "dc5887",
+    "lat": 35.2208325,
+    "lon": -97.4484911,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801991",
+    "slug": "teslasinton8154us77",
+    "lat": 28.03,
+    "lon": -97.53,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32801994",
+    "slug": "vanbureninnvanburen3131cloverleafst",
+    "lat": 35.44411,
+    "lon": -94.320872,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802033",
+    "slug": "52045",
+    "lat": 32.6938841,
+    "lon": -96.5180434,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802046",
+    "slug": "dc6546",
+    "lat": 29.010826,
+    "lon": -95.41154,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802047",
+    "slug": "52741",
+    "lat": 25.962568,
+    "lon": -97.508513,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802054",
+    "slug": "dc79245",
+    "lat": 29.7837391,
+    "lon": -95.1128456,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802058",
+    "slug": "53570",
+    "lat": 28.632151,
+    "lon": -96.630063,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802070",
+    "slug": "54422",
+    "lat": 25.960477,
+    "lon": -97.509741,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802127",
+    "slug": "51579",
+    "lat": 35.4205183,
+    "lon": -97.4889551,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802149",
+    "slug": "dc52599",
+    "lat": 29.76154,
+    "lon": -95.31026,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802152",
+    "slug": "52631",
+    "lat": 28.0680329,
+    "lon": -97.042396,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802167",
+    "slug": "dc5954",
+    "lat": 29.75713,
+    "lon": -95.369525,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802176",
+    "slug": "54820",
+    "lat": 29.707326,
+    "lon": -95.555515,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802201",
+    "slug": "springhillsuitesbymarriottaustinwestlakewaylakeway322medicalpkwy",
+    "lat": 30.329988,
+    "lon": -97.968375,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802202",
+    "slug": "riverbendonthefrioconcan32710us83",
+    "lat": 29.622573,
+    "lon": -99.75432,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802205",
+    "slug": "dc-405563",
+    "lat": 26.1903694,
+    "lon": -98.1181742,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32802209",
+    "slug": "417906",
+    "lat": 32.815128,
+    "lon": -96.800181,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32802212",
+    "slug": "418207",
+    "lat": 28.863272,
+    "lon": -96.9885582,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32802230",
+    "slug": "51815",
+    "lat": 30.328826,
+    "lon": -97.96455,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802242",
+    "slug": "52299",
+    "lat": 31.031165,
+    "lon": -97.477438,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802253",
+    "slug": "dc55859",
+    "lat": 30.5895967,
+    "lon": -103.8935071,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802272",
+    "slug": "dc6214",
+    "lat": 30.352052,
+    "lon": -97.708054,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802300",
+    "slug": "dc566",
+    "lat": 39.641587,
+    "lon": -106.378203,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802365",
+    "slug": "dc51645",
+    "lat": 31.959619,
+    "lon": -98.01877,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802381",
+    "slug": "dc74046",
+    "lat": 33.176829,
+    "lon": -96.641756,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802385",
+    "slug": "52747",
+    "lat": 25.94586,
+    "lon": -97.50578,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802413",
+    "slug": "54815",
+    "lat": 29.970734,
+    "lon": -95.558929,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802439",
+    "slug": "4005115",
+    "lat": 32.8090178,
+    "lon": -96.7985964,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32802444",
+    "slug": "414004",
+    "lat": 39.764733,
+    "lon": -104.98571,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32802447",
+    "slug": "dc414071",
+    "lat": 29.171575,
+    "lon": -99.8267675,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802454",
+    "slug": "dc414713",
+    "lat": 36.1495727,
+    "lon": -95.9148714,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802456",
+    "slug": "dc4887",
+    "lat": 39.799718,
+    "lon": -105.509,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32802564",
+    "slug": "dc416906",
+    "lat": 30.0002437,
+    "lon": -95.1586877,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32802565",
+    "slug": "dc417155",
+    "lat": 27.627984,
+    "lon": -97.2234478,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32803707",
+    "slug": "southpadretxsupercharger",
+    "lat": 26.08151,
+    "lon": -97.1610598,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32803716",
+    "slug": "474402",
+    "lat": 33.5725639,
+    "lon": -101.9065691,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
   },
   {
     "uuid": "32804421",
     "slug": "407909",
     "lat": 39.709912,
-    "lon": -105.075442
+    "lon": -105.075442,
+    "locationType": [
+      "party",
+      "destination_charger"
+    ]
   },
   {
-    "uuid": "32804423",
+    "uuid": "32804422",
     "slug": "DenverCOQ322",
-    "lat": 39.778313,
-    "lon": -104.848533
-  },
-  {
-    "uuid": "32804513",
-    "slug": "DenisonTXsupercharger",
-    "lat": 33.79303,
-    "lon": -96.555043
-  },
-  {
-    "uuid": "32805302",
-    "slug": "ShenandoahTX2Q42022",
-    "lat": 30.194963,
-    "lon": -95.452475
-  },
-  {
-    "uuid": "32805314",
-    "slug": "409113",
-    "lat": 28.307219,
-    "lon": -97.275193
-  },
-  {
-    "uuid": "32805318",
-    "slug": "35665",
-    "lat": 29.734352,
-    "lon": -95.605588
-  },
-  {
-    "uuid": "32805330",
-    "slug": "400716",
-    "lat": 39.618542,
-    "lon": -105.092465
-  },
-  {
-    "uuid": "32805530",
-    "slug": "431902",
-    "lat": 39.091349,
-    "lon": -108.552632
-  },
-  {
-    "uuid": "32805542",
-    "slug": "58769",
-    "lat": 29.712493,
-    "lon": -95.314552
-  },
-  {
-    "uuid": "32805546",
-    "slug": "58720",
-    "lat": 32.636205,
-    "lon": -97.062084
-  },
-  {
-    "uuid": "32805570",
-    "slug": "33917",
-    "lat": 32.215727,
-    "lon": -95.824895
-  },
-  {
-    "uuid": "32805574",
-    "slug": "58811",
-    "lat": 30.533729,
-    "lon": -97.784482
-  },
-  {
-    "uuid": "32805608",
-    "slug": "34556",
-    "lat": 30.05031,
-    "lon": -95.438297
-  },
-  {
-    "uuid": "32805612",
-    "slug": "425553",
-    "lat": 39.592059,
-    "lon": -104.87839
-  },
-  {
-    "uuid": "32805614",
-    "slug": "400788",
-    "lat": 32.130351,
-    "lon": -94.333
-  },
-  {
-    "uuid": "32805642",
-    "slug": "58896",
-    "lat": 35.622516,
-    "lon": -97.478602
-  },
-  {
-    "uuid": "32805660",
-    "slug": "58749",
-    "lat": 27.793269,
-    "lon": -97.651247
-  },
-  {
-    "uuid": "32805676",
-    "slug": "401970",
-    "lat": 39.889404,
-    "lon": -104.990375
-  },
-  {
-    "uuid": "32805678",
-    "slug": "58714",
-    "lat": 28.111057,
-    "lon": -97.818435
-  },
-  {
-    "uuid": "32805686",
-    "slug": "45384",
-    "lat": 32.92554,
-    "lon": -96.991721
-  },
-  {
-    "uuid": "32805694",
-    "slug": "404915",
-    "lat": 39.66665,
-    "lon": -104.862573
-  },
-  {
-    "uuid": "32805769",
-    "slug": "58303",
-    "lat": 29.740071,
-    "lon": -95.411915
-  },
-  {
-    "uuid": "32805819",
-    "slug": "ClydeTXQ322",
-    "lat": 32.417478,
-    "lon": -99.526559
-  },
-  {
-    "uuid": "32805870",
-    "slug": "32090",
-    "lat": 32.880789,
-    "lon": -97.074506
-  },
-  {
-    "uuid": "32805893",
-    "slug": "32614",
-    "lat": 28.995815,
-    "lon": -98.432241
-  },
-  {
-    "uuid": "32805963",
-    "slug": "BeaumontTXQ322",
-    "lat": 30.038821,
-    "lon": -94.160454
-  },
-  {
-    "uuid": "32806013",
-    "slug": "19078",
-    "lat": 35.440565,
-    "lon": -95.970074
-  },
-  {
-    "uuid": "32806906",
-    "slug": "MonumentCOsupercharger",
-    "lat": 39.092311,
-    "lon": -104.852583
-  },
-  {
-    "uuid": "32806918",
-    "slug": "DallasTXCentralQ322",
-    "lat": 32.767263,
-    "lon": -96.807834
-  },
-  {
-    "uuid": "32807034",
-    "slug": "30883",
-    "lat": 37.467355,
-    "lon": -105.868565
-  },
-  {
-    "uuid": "32807048",
-    "slug": "32629",
-    "lat": 32.428679,
-    "lon": -96.874374
-  },
-  {
-    "uuid": "32807588",
-    "slug": "4003236",
-    "lat": 29.766719,
-    "lon": -95.366075
-  },
-  {
-    "uuid": "32807603",
-    "slug": "20482",
-    "lat": 32.717361,
-    "lon": -96.323141
-  },
-  {
-    "uuid": "32807611",
-    "slug": "19055",
-    "lat": 31.725357,
-    "lon": -96.177634
-  },
-  {
-    "uuid": "32807942",
-    "slug": "58895",
-    "lat": 35.508774,
-    "lon": -97.501428
-  },
-  {
-    "uuid": "32808042",
-    "slug": "6854",
-    "lat": 35.610604,
-    "lon": -97.578048
-  },
-  {
-    "uuid": "32808069",
-    "slug": "19060",
-    "lat": 39.591149,
-    "lon": -106.096934
-  },
-  {
-    "uuid": "32808388",
-    "slug": "27147",
-    "lat": 32.900424,
-    "lon": -105.956248
-  },
-  {
-    "uuid": "32809541",
-    "slug": "19056",
-    "lat": 36.767938,
-    "lon": -108.148363
-  },
-  {
-    "uuid": "32809548",
-    "slug": "26628",
-    "lat": 39.40804,
-    "lon": -104.863051
-  },
-  {
-    "uuid": "32809923",
-    "slug": "407108",
-    "lat": 29.722869,
-    "lon": -95.442955
-  },
-  {
-    "uuid": "32812599",
-    "slug": "11076",
-    "lat": 29.768872,
-    "lon": -96.047485
-  },
-  {
-    "uuid": "32812833",
-    "slug": "idahospringscosupercharger",
-    "lat": 39.74158,
-    "lon": -105.518323
-  },
-  {
-    "uuid": "32812919",
-    "slug": "DenverCOEastsupercharger",
-    "lat": 39.71785,
-    "lon": -104.9059
-  },
-  {
-    "uuid": "32812965",
-    "slug": "lakewoodwcosupercharger",
-    "lat": 39.733725,
-    "lon": -105.154143
-  },
-  {
-    "uuid": "32813015",
-    "slug": "26825",
-    "lat": 30.71166,
-    "lon": -94.92037
-  },
-  {
-    "uuid": "32813017",
-    "slug": "QuanahTXQ42022",
-    "lat": 34.291734,
-    "lon": -99.755223
-  },
-  {
-    "uuid": "32813035",
-    "slug": "32846",
-    "lat": 39.643908,
-    "lon": -106.88829
-  },
-  {
-    "uuid": "32813057",
-    "slug": "35124",
-    "lat": 39.804175,
-    "lon": -104.770854
-  },
-  {
-    "uuid": "32813077",
-    "slug": "32765",
-    "lat": 30.390456,
-    "lon": -97.733056
-  },
-  {
-    "uuid": "32813091",
-    "slug": "NorthRichlandHillsTXQ322",
-    "lat": 32.906768,
-    "lon": -97.187274
-  },
-  {
-    "uuid": "32813131",
-    "slug": "439888",
-    "lat": 29.394108,
-    "lon": -100.901589
-  },
-  {
-    "uuid": "32813151",
-    "slug": "27050",
-    "lat": 33.200156,
-    "lon": -101.382598
-  },
-  {
-    "uuid": "32813171",
-    "slug": "lubbocksupercharger",
-    "lat": 33.520932,
-    "lon": -101.961617
-  },
-  {
-    "uuid": "32813179",
-    "slug": "27189",
-    "lat": 35.48443,
-    "lon": -94.224294
-  },
-  {
-    "uuid": "32813329",
-    "slug": "402055",
-    "lat": 40.153157,
-    "lon": -105.106909
-  },
-  {
-    "uuid": "32813341",
-    "slug": "35401",
-    "lat": 33.055957,
-    "lon": -96.830796
-  },
-  {
-    "uuid": "32813355",
-    "slug": "33906",
-    "lat": 29.211775,
-    "lon": -99.77725
-  },
-  {
-    "uuid": "32813381",
-    "slug": "407954",
-    "lat": 30.599847,
-    "lon": -96.28905
-  },
-  {
-    "uuid": "32813389",
-    "slug": "ShenandoahTX1Q42022",
-    "lat": 30.188753,
-    "lon": -95.452172
-  },
-  {
-    "uuid": "32813391",
-    "slug": "58699",
-    "lat": 39.548185,
-    "lon": -105.005471
-  },
-  {
-    "uuid": "32813393",
-    "slug": "58803",
-    "lat": 32.611534,
-    "lon": -98.109965
-  },
-  {
-    "uuid": "32813441",
-    "slug": "32606",
-    "lat": 29.464149,
-    "lon": -98.289059
-  },
-  {
-    "uuid": "32813479",
-    "slug": "33907",
-    "lat": 28.811321,
-    "lon": -97.85706
-  },
-  {
-    "uuid": "32813505",
-    "slug": "ParachuteCOQ322",
-    "lat": 39.452514,
-    "lon": -108.045897
-  },
-  {
-    "uuid": "32813565",
-    "slug": "56606",
-    "lat": 33.680746,
-    "lon": -93.606763
-  },
-  {
-    "uuid": "32813583",
-    "slug": "35521",
-    "lat": 32.941272,
-    "lon": -97.073712
-  },
-  {
-    "uuid": "32813625",
-    "slug": "32561",
-    "lat": 40.334105,
-    "lon": -104.985129
-  },
-  {
-    "uuid": "32813673",
-    "slug": "36231",
-    "lat": 29.675562,
-    "lon": -95.290672
-  },
-  {
-    "uuid": "32813744",
-    "slug": "NewBostonTXQ42022",
-    "lat": 33.469746,
-    "lon": -94.454502
-  },
-  {
-    "uuid": "32813750",
-    "slug": "20484",
-    "lat": 32.979144,
-    "lon": -96.296356
-  },
-  {
-    "uuid": "32813778",
-    "slug": "AustinTXSouthsupercharger",
-    "lat": 30.162924,
-    "lon": -97.792228
-  },
-  {
-    "uuid": "32813922",
-    "slug": "montrosecosupercharger",
-    "lat": 38.481329,
-    "lon": -107.876589
-  },
-  {
-    "uuid": "32814016",
-    "slug": "BrownsvilleTXsupercharger",
-    "lat": 25.950746,
-    "lon": -97.487692
-  },
-  {
-    "uuid": "32814044",
-    "slug": "brightoncosupercharger",
-    "lat": 39.971975,
-    "lon": -104.748579
-  },
-  {
-    "uuid": "32814076",
-    "slug": "madisonvilletxsupercharger",
-    "lat": 30.966103,
-    "lon": -95.879513
-  },
-  {
-    "uuid": "32814088",
-    "slug": "CorpusChristiTXSupercharger",
-    "lat": 27.710339,
-    "lon": -97.368509
-  },
-  {
-    "uuid": "32814102",
-    "slug": "19047",
-    "lat": 31.68863,
-    "lon": -106.264782
-  },
-  {
-    "uuid": "32814116",
-    "slug": "AmarilloTXSupercharger",
-    "lat": 35.193316,
-    "lon": -101.744638
-  },
-  {
-    "uuid": "32814148",
-    "slug": "llanotxsupercharger",
-    "lat": 30.750518,
-    "lon": -98.674887
-  },
-  {
-    "uuid": "32814154",
-    "slug": "19179",
-    "lat": 35.627747,
-    "lon": -106.025841
-  },
-  {
-    "uuid": "32814170",
-    "slug": "NewBraunfelsTXSupercharger",
-    "lat": 29.726988,
-    "lon": -98.079645
-  },
-  {
-    "uuid": "32814176",
-    "slug": "BigSpringTXQ322",
-    "lat": 32.258105,
-    "lon": -101.453203
-  },
-  {
-    "uuid": "32814184",
-    "slug": "18975",
-    "lat": 35.171818,
-    "lon": -106.586583
-  },
-  {
-    "uuid": "32814232",
-    "slug": "BeeCaveTXSupercharger",
-    "lat": 30.303745,
-    "lon": -97.941826
-  },
-  {
-    "uuid": "32814244",
-    "slug": "DelValleTXSupercharger",
-    "lat": 30.172435,
-    "lon": -97.630898
-  },
-  {
-    "uuid": "32814248",
-    "slug": "LamarCOSupercharger",
-    "lat": 38.089382,
-    "lon": -102.618311
-  },
-  {
-    "uuid": "32814258",
-    "slug": "19206",
-    "lat": 31.137929,
-    "lon": -97.328629
-  },
-  {
-    "uuid": "32814338",
-    "slug": "19219",
-    "lat": 31.037366,
-    "lon": -104.854841
-  },
-  {
-    "uuid": "32815072",
-    "slug": "BastropTXSupercharger",
-    "lat": 30.105946,
-    "lon": -97.305485
-  },
-  {
-    "uuid": "32815487",
-    "slug": "59093",
-    "lat": 27.224785,
-    "lon": -98.145197
-  },
-  {
-    "uuid": "32816549",
-    "slug": "32743",
-    "lat": 32.046863,
-    "lon": -97.093739
-  },
-  {
-    "uuid": "32816603",
-    "slug": "26988",
-    "lat": 29.503681,
-    "lon": -98.699296
-  },
-  {
-    "uuid": "32816642",
-    "slug": "32656",
-    "lat": 39.817776,
-    "lon": -104.773311
-  },
-  {
-    "uuid": "32816646",
-    "slug": "19046",
-    "lat": 31.751405,
-    "lon": -106.344631
-  },
-  {
-    "uuid": "32816657",
-    "slug": "18987",
-    "lat": 29.774603,
-    "lon": -95.400434
-  },
-  {
-    "uuid": "32816725",
-    "slug": "VanBurenARsupercharger",
-    "lat": 35.458462,
-    "lon": -94.356157
-  },
-  {
-    "uuid": "32816774",
-    "slug": "PuebloCOSupercharger",
-    "lat": 38.267192,
-    "lon": -104.60956
-  },
-  {
-    "uuid": "32816778",
-    "slug": "438410",
-    "lat": 33.010487,
-    "lon": -96.970148
-  },
-  {
-    "uuid": "32816793",
-    "slug": "58349",
-    "lat": 39.506501,
-    "lon": -106.141408
-  },
-  {
-    "uuid": "32817230",
-    "slug": "19084",
-    "lat": 30.131572,
-    "lon": -95.237261
-  },
-  {
-    "uuid": "32817404",
-    "slug": "412876",
-    "lat": 32.864932,
-    "lon": -97.313969
-  },
-  {
-    "uuid": "32817502",
-    "slug": "26990",
-    "lat": 31.797326,
-    "lon": -106.267374
-  },
-  {
-    "uuid": "32817533",
-    "slug": "32724",
-    "lat": 31.395378,
-    "lon": -97.207255
-  },
-  {
-    "uuid": "32817590",
-    "slug": "437210",
-    "lat": 30.642656,
-    "lon": -96.350278
-  },
-  {
-    "uuid": "32817625",
-    "slug": "MelissaTXQ322",
-    "lat": 33.270588,
-    "lon": -96.592931
-  },
-  {
-    "uuid": "32817687",
-    "slug": "33905",
-    "lat": 32.391702,
-    "lon": -104.220485
-  },
-  {
-    "uuid": "32817836",
-    "slug": "56489",
-    "lat": 29.984459,
-    "lon": -95.299597
-  },
-  {
-    "uuid": "32818537",
-    "slug": "45386",
-    "lat": 32.871517,
-    "lon": -96.995036
-  },
-  {
-    "uuid": "32818620",
-    "slug": "19035",
-    "lat": 32.672276,
-    "lon": -96.968816
+    "lat": 39.778343,
+    "lon": -104.848559,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32804552",
+    "slug": "dc12360",
+    "lat": 31.055349,
+    "lon": -98.178623,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804553",
+    "slug": "dc14805",
+    "lat": 26.137876,
+    "lon": -97.169587,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804558",
+    "slug": "dc14880",
+    "lat": 32.303684,
+    "lon": -95.322739,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804566",
+    "slug": "dc16956",
+    "lat": 33.042137,
+    "lon": -96.830928,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804567",
+    "slug": "dc16960",
+    "lat": 40.382956,
+    "lon": -105.518995,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804568",
+    "slug": "dc17241",
+    "lat": 28.056981,
+    "lon": -97.041521,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804579",
+    "slug": "dc17009",
+    "lat": 32.310125,
+    "lon": -106.778422,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804580",
+    "slug": "dc15904",
+    "lat": 30.224228,
+    "lon": -98.800846,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804582",
+    "slug": "dc11429",
+    "lat": 32.899809,
+    "lon": -97.040335,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804642",
+    "slug": "dc12173",
+    "lat": 35.091527,
+    "lon": -106.660941,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804643",
+    "slug": "dc12358",
+    "lat": 34.160417,
+    "lon": -99.311336,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804649",
+    "slug": "dc11879",
+    "lat": 30.408205,
+    "lon": -97.666596,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804653",
+    "slug": "dc11727",
+    "lat": 30.104326,
+    "lon": -95.429301,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804657",
+    "slug": "dc11819",
+    "lat": 29.27023,
+    "lon": -94.821473,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804668",
+    "slug": "dc13169",
+    "lat": 38.8566,
+    "lon": -107.615,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804701",
+    "slug": "dc15926",
+    "lat": 38.791226,
+    "lon": -104.850101,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804720",
+    "slug": "dc12889",
+    "lat": 30.043046,
+    "lon": -94.150541,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804721",
+    "slug": "dc12855",
+    "lat": 29.748067,
+    "lon": -95.386061,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804722",
+    "slug": "dc12898",
+    "lat": 30.177951,
+    "lon": -95.452684,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804744",
+    "slug": "dc19021",
+    "lat": 29.989143,
+    "lon": -95.571772,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804751",
+    "slug": "dc18574",
+    "lat": 29.776238,
+    "lon": -95.814941,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804756",
+    "slug": "dc19023",
+    "lat": 29.688453,
+    "lon": -95.419609,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32804767",
+    "slug": "dc19897",
+    "lat": 29.305229,
+    "lon": -94.798922,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806195",
+    "slug": "dc21545",
+    "lat": 30.140265,
+    "lon": -96.40033,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806219",
+    "slug": "dc23002",
+    "lat": 29.695115,
+    "lon": -98.099054,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806226",
+    "slug": "dc24727",
+    "lat": 26.056496,
+    "lon": -98.363687,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806264",
+    "slug": "dc28863",
+    "lat": 32.314574,
+    "lon": -106.778826,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806337",
+    "slug": "dc4992",
+    "lat": 31.0778128,
+    "lon": -97.6561128,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806384",
+    "slug": "dc5839",
+    "lat": 31.49365,
+    "lon": -97.160484,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806426",
+    "slug": "dc43390",
+    "lat": 32.387396,
+    "lon": -96.850721,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806434",
+    "slug": "dc5085",
+    "lat": 33.045043,
+    "lon": -96.702983,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806436",
+    "slug": "dc5099",
+    "lat": 36.410313,
+    "lon": -93.734754,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806442",
+    "slug": "dc52306",
+    "lat": 31.191767,
+    "lon": -101.450641,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806461",
+    "slug": "51711",
+    "lat": 31.238307,
+    "lon": -98.13279,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806507",
+    "slug": "53528",
+    "lat": 38.026608,
+    "lon": -107.671075,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806538",
+    "slug": "dc20121",
+    "lat": 38.512443,
+    "lon": -106.331987,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806540",
+    "slug": "dc2072",
+    "lat": 30.269491,
+    "lon": -97.742266,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806612",
+    "slug": "dc30216",
+    "lat": 28.662657,
+    "lon": -106.127363,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806634",
+    "slug": "dc32188",
+    "lat": 32.570158,
+    "lon": -96.823234,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806640",
+    "slug": "dc32682",
+    "lat": 29.957064,
+    "lon": -95.550736,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806654",
+    "slug": "dc40596",
+    "lat": 32.926961,
+    "lon": -96.824545,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806752",
+    "slug": "dc2276",
+    "lat": 33.182787,
+    "lon": -97.100066,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806774",
+    "slug": "dc26641",
+    "lat": 39.771872,
+    "lon": -104.80692,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806815",
+    "slug": "dc29773",
+    "lat": 38.991507,
+    "lon": -104.808268,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806816",
+    "slug": "dc29848",
+    "lat": 30.067054,
+    "lon": -99.330143,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806826",
+    "slug": "dc28565",
+    "lat": 28.057918,
+    "lon": -97.041743,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806837",
+    "slug": "dc35378",
+    "lat": 33.225812,
+    "lon": -97.170143,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806840",
+    "slug": "dc348",
+    "lat": 30.3272668,
+    "lon": -97.9254155,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32806858",
+    "slug": "dc4077",
+    "lat": 30.27634,
+    "lon": -98.402635,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32809539",
+    "slug": "467306",
+    "lat": 39.7996109,
+    "lon": -104.8829999,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809546",
+    "slug": "431752",
+    "lat": 32.29363,
+    "lon": -106.7775581,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809596",
+    "slug": "dc23372",
+    "lat": 28.626756,
+    "lon": -106.114846,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32809812",
+    "slug": "dc14634",
+    "lat": 36.305126,
+    "lon": -95.319671,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32809816",
+    "slug": "dc950218164",
+    "lat": 32.9666543,
+    "lon": -97.0303122,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809818",
+    "slug": "53462",
+    "lat": 30.2645053,
+    "lon": -97.7433019,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32809820",
+    "slug": "401752",
+    "lat": 29.5293468,
+    "lon": -98.6859144,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809823",
+    "slug": "52089",
+    "lat": 32.78687,
+    "lon": -96.79593,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32809826",
+    "slug": "dc407475",
+    "lat": 29.5691107,
+    "lon": -95.5631004,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809829",
+    "slug": "441602",
+    "lat": 30.3637618,
+    "lon": -103.6407485,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809835",
+    "slug": "437967",
+    "lat": 30.2215422,
+    "lon": -98.7203135,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32809845",
+    "slug": "4007522",
+    "lat": 29.603203,
+    "lon": -95.624834,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809863",
+    "slug": "464404",
+    "lat": 39.5881909,
+    "lon": -104.8626098,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809864",
+    "slug": "464502",
+    "lat": 30.2374937,
+    "lon": -97.7552252,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809872",
+    "slug": "457207",
+    "lat": 29.2914055,
+    "lon": -94.8606911,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809883",
+    "slug": "469054",
+    "lat": 32.5436033,
+    "lon": -94.7375331,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32809913",
+    "slug": "474206",
+    "lat": 29.9024751,
+    "lon": -95.5443949,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810042",
+    "slug": "478452",
+    "lat": 33.2221723,
+    "lon": -97.1670058,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810062",
+    "slug": "461355",
+    "lat": 33.2091495,
+    "lon": -96.824969,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810067",
+    "slug": "466706",
+    "lat": 30.1099227,
+    "lon": -97.3473599,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810071",
+    "slug": "481512",
+    "lat": 40.7944394,
+    "lon": -105.2167318,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810072",
+    "slug": "481207",
+    "lat": 32.7441365,
+    "lon": -97.3329643,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810085",
+    "slug": "dc6021",
+    "lat": 38.746526,
+    "lon": -105.174984,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810100",
+    "slug": "53464",
+    "lat": 39.718888,
+    "lon": -104.955621,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810116",
+    "slug": "dc67691",
+    "lat": 36.091183,
+    "lon": -95.924064,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810143",
+    "slug": "404403",
+    "lat": 39.6733739,
+    "lon": -104.9871239,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810145",
+    "slug": "dc403705",
+    "lat": 32.4416917,
+    "lon": -97.7903253,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810146",
+    "slug": "dc405260",
+    "lat": 29.5776994,
+    "lon": -95.5760453,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810304",
+    "slug": "53564",
+    "lat": 27.711,
+    "lon": -97.371231,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810320",
+    "slug": "dc5874",
+    "lat": 30.352669,
+    "lon": -97.70974,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810373",
+    "slug": "dc413932",
+    "lat": 36.1013105,
+    "lon": -95.9126235,
+    "locationType": [
+      "destination_charger_nontesla",
+      "self_serve_demo_drive"
+    ]
+  },
+  {
+    "uuid": "32810379",
+    "slug": "412256",
+    "lat": 39.628798,
+    "lon": -106.49477,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810384",
+    "slug": "426566",
+    "lat": 33.0886896,
+    "lon": -96.8398333,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810391",
+    "slug": "19010",
+    "lat": 32.5799439,
+    "lon": -95.8563727,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810397",
+    "slug": "dc75662",
+    "lat": 32.373182,
+    "lon": -99.749356,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810454",
+    "slug": "dc9506",
+    "lat": 39.755936,
+    "lon": -105.222952,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810464",
+    "slug": "dc6023",
+    "lat": 38.750565,
+    "lon": -105.173815,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810468",
+    "slug": "55469",
+    "lat": 29.638358,
+    "lon": -95.275339,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810481",
+    "slug": "dc401982",
+    "lat": 36.1493385,
+    "lon": -95.9148161,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810485",
+    "slug": "409365",
+    "lat": 26.1350585,
+    "lon": -97.1710289,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810489",
+    "slug": "409130",
+    "lat": 30.2635204,
+    "lon": -98.8472378,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810490",
+    "slug": "lubbock6107",
+    "lat": 33.5378987,
+    "lon": -101.950164,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810497",
+    "slug": "423755",
+    "lat": 28.7052803,
+    "lon": -96.4301537,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810509",
+    "slug": "450505",
+    "lat": 30.9039726,
+    "lon": -102.9021166,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810515",
+    "slug": "51356",
+    "lat": 30.16678,
+    "lon": -98.38211,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810565",
+    "slug": "dc53921",
+    "lat": 38.732843,
+    "lon": -106.162829,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810580",
+    "slug": "dc56471",
+    "lat": 39.64258,
+    "lon": -106.378004,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810598",
+    "slug": "401994",
+    "lat": 30.2710479,
+    "lon": -97.743495,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810605",
+    "slug": "429705",
+    "lat": 32.7538028,
+    "lon": -97.3302639,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810606",
+    "slug": "434259",
+    "lat": 27.7046833,
+    "lon": -97.3650702,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810607",
+    "slug": "443558",
+    "lat": 38.4390265,
+    "lon": -105.2408453,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810611",
+    "slug": "51052",
+    "lat": 29.755234,
+    "lon": -95.360952,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810636",
+    "slug": "52778",
+    "lat": 25.964085,
+    "lon": -97.507339,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810647",
+    "slug": "52780",
+    "lat": 29.41212,
+    "lon": -95.041771,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810664",
+    "slug": "54352",
+    "lat": 30.126261,
+    "lon": -95.423845,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810671",
+    "slug": "54816",
+    "lat": 30.378657,
+    "lon": -97.675981,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810697",
+    "slug": "429565",
+    "lat": 37.8132947,
+    "lon": -107.6631984,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810703",
+    "slug": "436955",
+    "lat": 39.77558,
+    "lon": -104.879655,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810746",
+    "slug": "dc70751",
+    "lat": 35.478122,
+    "lon": -97.750819,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810760",
+    "slug": "scottishinnssuitesiahairporthumble7827farmtomarket1960bypassrdw",
+    "lat": 30.00558,
+    "lon": -95.3083379,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810773",
+    "slug": "409516",
+    "lat": 33.457663,
+    "lon": -94.076708,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810809",
+    "slug": "dc9507",
+    "lat": 29.966348,
+    "lon": -98.90732,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810828",
+    "slug": "dc681",
+    "lat": 39.188821,
+    "lon": -106.821168,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810845",
+    "slug": "54779",
+    "lat": 32.786616,
+    "lon": -97.3497281,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810880",
+    "slug": "416905",
+    "lat": 29.8034925,
+    "lon": -95.1621946,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810884",
+    "slug": "428757",
+    "lat": 32.2707629,
+    "lon": -97.1872003,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810892",
+    "slug": "442364",
+    "lat": 27.8518369,
+    "lon": -97.6291301,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32810971",
+    "slug": "407512",
+    "lat": 30.3602128,
+    "lon": -97.7423068,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810976",
+    "slug": "417508",
+    "lat": 29.4058465,
+    "lon": -98.6161104,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32810981",
+    "slug": "441111",
+    "lat": 34.1720771,
+    "lon": -97.1614339,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32811134",
+    "slug": "dc12897",
+    "lat": 28.989004,
+    "lon": -95.928545,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811143",
+    "slug": "dc13657",
+    "lat": 32.8364691,
+    "lon": -96.8058948,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811144",
+    "slug": "dc13783",
+    "lat": 31.048649,
+    "lon": -94.124886,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811150",
+    "slug": "dc15548",
+    "lat": 30.149202,
+    "lon": -96.386061,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811161",
+    "slug": "dc17535",
+    "lat": 36.355003,
+    "lon": -105.613678,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811163",
+    "slug": "dc17088",
+    "lat": 37.934854,
+    "lon": -107.846334,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811166",
+    "slug": "dc1735",
+    "lat": 39.604825,
+    "lon": -106.515487,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811209",
+    "slug": "dc26431",
+    "lat": 29.859895,
+    "lon": -97.951442,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811210",
+    "slug": "dc26407",
+    "lat": 33.331697,
+    "lon": -105.675763,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811219",
+    "slug": "dc26722",
+    "lat": 40.464727,
+    "lon": -106.823199,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811227",
+    "slug": "dc27781",
+    "lat": 35.444932,
+    "lon": -97.419801,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811229",
+    "slug": "dc2779",
+    "lat": 30.1516232,
+    "lon": -93.6375554,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811234",
+    "slug": "dc31296",
+    "lat": 39.636509,
+    "lon": -106.524947,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811235",
+    "slug": "dc31459",
+    "lat": 32.495518,
+    "lon": -94.357031,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32811244",
+    "slug": "dc31210",
+    "lat": 29.80628,
+    "lon": -94.984893,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811369",
+    "slug": "dc25821",
+    "lat": 39.633279,
+    "lon": -106.533438,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811413",
+    "slug": "dc39749",
+    "lat": 39.400372,
+    "lon": -107.207925,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32811416",
+    "slug": "dc4058",
+    "lat": 38.8474668,
+    "lon": -104.8645278,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811421",
+    "slug": "dc5108",
+    "lat": 30.0133,
+    "lon": -98.10817,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811429",
+    "slug": "tesladallas555slamarstdallastx75202omnidallas",
+    "lat": 32.7751123,
+    "lon": -96.8042019,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811438",
+    "slug": "dc11482",
+    "lat": 39.623703,
+    "lon": -106.541101,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811439",
+    "slug": "dc1149",
+    "lat": 26.247609,
+    "lon": -98.205917,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811558",
+    "slug": "dc37019",
+    "lat": 29.758401,
+    "lon": -95.3642,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811586",
+    "slug": "dc11932",
+    "lat": 29.738161,
+    "lon": -95.467246,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811594",
+    "slug": "dc12098",
+    "lat": 40.36083,
+    "lon": -105.553686,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811635",
+    "slug": "dc21790",
+    "lat": 29.657367,
+    "lon": -95.157818,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811638",
+    "slug": "dc2127",
+    "lat": 30.395197,
+    "lon": -97.726426,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811662",
+    "slug": "dc25162",
+    "lat": 26.926011,
+    "lon": -101.420193,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811668",
+    "slug": "dc25146",
+    "lat": 31.737611,
+    "lon": -106.453343,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811692",
+    "slug": "dc30195",
+    "lat": 29.784211,
+    "lon": -95.761397,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811694",
+    "slug": "dc30520",
+    "lat": 29.707875,
+    "lon": -95.403851,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811860",
+    "slug": "dc32766",
+    "lat": 32.903624,
+    "lon": -96.563925,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811866",
+    "slug": "dc31662",
+    "lat": 39.642952,
+    "lon": -106.379133,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811889",
+    "slug": "teslaaustin301brazosstwhitleyapartments",
+    "lat": 30.26505,
+    "lon": -97.74187,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32811912",
+    "slug": "dc14806",
+    "lat": 26.198734,
+    "lon": -98.260723,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811932",
+    "slug": "dc18880",
+    "lat": 34.077106,
+    "lon": -98.555634,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811933",
+    "slug": "dc18843",
+    "lat": 29.999578,
+    "lon": -95.196049,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811953",
+    "slug": "dc2025",
+    "lat": 32.641745,
+    "lon": -96.888506,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811956",
+    "slug": "dc2073",
+    "lat": 30.250541,
+    "lon": -97.749422,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811997",
+    "slug": "dc282",
+    "lat": 39.641904,
+    "lon": -106.373118,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32811998",
+    "slug": "dc279",
+    "lat": 30.265397,
+    "lon": -97.746566,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812032",
+    "slug": "dc386",
+    "lat": 39.6433049,
+    "lon": -106.3882985,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812035",
+    "slug": "dc3965",
+    "lat": 30.25196,
+    "lon": -97.746725,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812066",
+    "slug": "dc14099",
+    "lat": 30.410666,
+    "lon": -97.849318,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812115",
+    "slug": "dc191",
+    "lat": 37.937018,
+    "lon": -107.81787,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812117",
+    "slug": "dc223",
+    "lat": 39.746368,
+    "lon": -104.998439,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812146",
+    "slug": "dc24892",
+    "lat": 35.754172,
+    "lon": -96.664708,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812212",
+    "slug": "dc1089",
+    "lat": 35.110373,
+    "lon": -106.5677521,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812251",
+    "slug": "dc18151",
+    "lat": 37.933296,
+    "lon": -107.851414,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812264",
+    "slug": "dc19381",
+    "lat": 29.302678,
+    "lon": -94.809501,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812346",
+    "slug": "dc468",
+    "lat": 35.683768,
+    "lon": -105.938017,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812364",
+    "slug": "dc11535",
+    "lat": 30.646748,
+    "lon": -96.302227,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812370",
+    "slug": "dc11767",
+    "lat": 33.18006,
+    "lon": -97.111717,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812379",
+    "slug": "dc13242",
+    "lat": 35.193396,
+    "lon": -101.752268,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812382",
+    "slug": "dc13306",
+    "lat": 33.081451,
+    "lon": -96.81778,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812384",
+    "slug": "dc13473",
+    "lat": 37.772713,
+    "lon": -108.093936,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812385",
+    "slug": "dc13420",
+    "lat": 38.857167,
+    "lon": -104.911329,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812431",
+    "slug": "dc2266",
+    "lat": 32.88024,
+    "lon": -96.768568,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812487",
+    "slug": "dc35396",
+    "lat": 29.442684,
+    "lon": -98.48113,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812490",
+    "slug": "dc34913",
+    "lat": 38.857872,
+    "lon": -104.897045,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812496",
+    "slug": "dc4563",
+    "lat": 37.213487,
+    "lon": -108.071904,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32812504",
+    "slug": "dc43571",
+    "lat": 33.066176,
+    "lon": -96.885284,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815589",
+    "slug": "dc10990",
+    "lat": 30.04398,
+    "lon": -95.431836,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815653",
+    "slug": "dc1200",
+    "lat": 29.4606418,
+    "lon": -98.6809713,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815664",
+    "slug": "dc14035",
+    "lat": 27.71813,
+    "lon": -97.392836,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815666",
+    "slug": "dc13806",
+    "lat": 31.575288,
+    "lon": -102.894648,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815715",
+    "slug": "dc15886",
+    "lat": 30.357106,
+    "lon": -97.74863,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815815",
+    "slug": "dc12104",
+    "lat": 38.746365,
+    "lon": -105.178111,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815820",
+    "slug": "dc12420",
+    "lat": 30.105139,
+    "lon": -95.429779,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815826",
+    "slug": "dc12697",
+    "lat": 32.915716,
+    "lon": -96.896088,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815832",
+    "slug": "dc15585",
+    "lat": 39.958739,
+    "lon": -104.99283,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815902",
+    "slug": "dc211",
+    "lat": 32.786413,
+    "lon": -96.795473,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815903",
+    "slug": "dc2126",
+    "lat": 30.44599,
+    "lon": -97.868845,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815964",
+    "slug": "dc3454",
+    "lat": 39.966312,
+    "lon": -105.784233,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815965",
+    "slug": "dc33777",
+    "lat": 35.66093,
+    "lon": -105.983492,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815970",
+    "slug": "dc4994",
+    "lat": 31.0863846,
+    "lon": -97.7145113,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32815987",
+    "slug": "51724",
+    "lat": 32.515913,
+    "lon": -93.738925,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816051",
+    "slug": "dc4076",
+    "lat": 31.3959245,
+    "lon": -103.5053541,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816072",
+    "slug": "52309",
+    "lat": 29.783684,
+    "lon": -95.650532,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816186",
+    "slug": "dc38901",
+    "lat": 28.663588,
+    "lon": -106.128347,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816197",
+    "slug": "dc36382",
+    "lat": 33.240214,
+    "lon": -97.050542,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816204",
+    "slug": "dc5961",
+    "lat": 32.39623,
+    "lon": -99.764642,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816208",
+    "slug": "dc9519",
+    "lat": 30.479799,
+    "lon": -97.686671,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816209",
+    "slug": "dc5943",
+    "lat": 30.398309,
+    "lon": -97.719381,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816283",
+    "slug": "dc4750",
+    "lat": 32.43976,
+    "lon": -97.788643,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816290",
+    "slug": "dc4892",
+    "lat": 40.566111,
+    "lon": -105.082853,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816291",
+    "slug": "dc469",
+    "lat": 35.799723,
+    "lon": -105.921923,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816304",
+    "slug": "51415",
+    "lat": 30.188007,
+    "lon": -97.663024,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816315",
+    "slug": "dc786",
+    "lat": 39.1844849,
+    "lon": -106.81437,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816340",
+    "slug": "dc26819",
+    "lat": 29.417235,
+    "lon": -98.489771,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816345",
+    "slug": "dc30277",
+    "lat": 29.71204,
+    "lon": -95.220038,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816346",
+    "slug": "dc30445",
+    "lat": 30.477825,
+    "lon": -97.680383,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816356",
+    "slug": "dc29859",
+    "lat": 32.322979,
+    "lon": -96.206841,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816369",
+    "slug": "dc392",
+    "lat": 26.189078,
+    "lon": -98.205367,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816373",
+    "slug": "dc3963",
+    "lat": 28.31911,
+    "lon": -98.113639,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816384",
+    "slug": "dc42549",
+    "lat": 26.082599,
+    "lon": -97.161387,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816479",
+    "slug": "dc5194",
+    "lat": 29.9758381,
+    "lon": -98.0922896,
+    "locationType": [
+      "destination_charger"
+    ]
+  },
+  {
+    "uuid": "32816560",
+    "slug": "445602",
+    "lat": 29.752975,
+    "lon": -95.360996,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32816578",
+    "slug": "484111",
+    "lat": 30.2030098,
+    "lon": -97.7735976,
+    "locationType": [
+      "destination_charger_nontesla"
+    ]
+  },
+  {
+    "uuid": "32817240",
+    "slug": "dc1136",
+    "lat": 36.374129,
+    "lon": -94.207805,
+    "locationType": [
+      "destination_charger",
+      "self_serve_demo_drive"
+    ]
   }
 ];
 
@@ -1372,9 +4846,17 @@
     return new Promise(resolve => setTimeout(resolve, ms));
   }
 
+  // Helper to determine programType for each station
+  function getProgramType(locationType) {
+    if (!locationType) return 'supercharger';
+    const isDestination = locationType.some(t => t.includes('destination_charger'));
+    return isDestination ? 'charger' : 'supercharger';
+  }
+
   // Fetch with retry logic
   async function fetchStationDetails(station, retries = 3) {
-    const url = `${API_BASE}?${API_PARAMS}&locationSlug=${station.slug}`;
+    const programType = getProgramType(station.locationType);
+    const url = `${API_BASE}?${API_PARAMS}&programType=${programType}&locationSlug=${station.slug}`;
 
     for (let attempt = 0; attempt < retries; attempt++) {
       try {
