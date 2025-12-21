@@ -26,22 +26,24 @@ function parsePricing(effectivePricebooks) {
   const charging = effectivePricebooks.filter(pb => pb.feeType === 'CHARGING');
   const congestion = effectivePricebooks.find(pb => pb.feeType === 'CONGESTION');
 
-  // Only include Time-of-Use pricing, skip flat rates
+  // Include both Time-of-Use and flat-rate pricing
   const teslaPricing = charging
-    .filter(pb => pb.vehicleMakeType === 'TSLA' && pb.isTou === true)
+    .filter(pb => pb.vehicleMakeType === 'TSLA')
     .map(pb => ({
       rate: pb.rateBase,
       startTime: pb.startTime || '00:00',
-      endTime: pb.endTime || '24:00'
+      endTime: pb.endTime || '24:00',
+      isTou: pb.isTou
     }))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
   const nonTeslaPricing = charging
-    .filter(pb => pb.vehicleMakeType === 'NTSLA' && pb.isTou === true)
+    .filter(pb => pb.vehicleMakeType === 'NTSLA')
     .map(pb => ({
       rate: pb.rateBase,
       startTime: pb.startTime || '00:00',
-      endTime: pb.endTime || '24:00'
+      endTime: pb.endTime || '24:00',
+      isTou: pb.isTou
     }))
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
@@ -78,25 +80,46 @@ function determineChargerType(locationType) {
 
 function processStations() {
   console.log('🔄 Processing stations for map...\n');
+  console.log('═'.repeat(50));
 
   // Load data
   const rawLocations = JSON.parse(fs.readFileSync('./data/raw-locations.json', 'utf-8'));
   const rawDetails = JSON.parse(fs.readFileSync('./data/raw-details-all.json', 'utf-8'));
 
-  console.log(`✓ Loaded ${rawLocations.length} locations`);
-  console.log(`✓ Loaded ${Object.keys(rawDetails).length} station details\n`);
+  console.log(`✓ Loaded ${rawLocations.length.toLocaleString()} locations`);
+  console.log(`✓ Loaded ${Object.keys(rawDetails).length.toLocaleString()} station details\n`);
 
   const processedStations = [];
-  let excluded = { teslaOnly: 0, comingSoon: 0, destination: 0, noDetails: 0 };
+  let excluded = { teslaOnly: 0, comingSoon: 0, destination: 0, noDetails: 0, wrongState: 0, invalidData: 0 };
 
   // Process each location that has details
   for (const [uuid, detailsWrapper] of Object.entries(rawDetails)) {
-    const details = detailsWrapper.data?.data;
-    if (!details) continue;
+    // Handle both old format (direct data) and new format (with success flag)
+    let details;
 
-    // Filter by state
+    if (detailsWrapper.success === false) {
+      // Failed fetch in new format
+      excluded.invalidData++;
+      continue;
+    } else if (detailsWrapper.success === true) {
+      // New format with success flag - try both nested levels
+      details = detailsWrapper.data?.data?.data || detailsWrapper.data?.data;
+    } else {
+      // Old format (direct data field)
+      details = detailsWrapper.data?.data;
+    }
+
+    if (!details) {
+      excluded.invalidData++;
+      continue;
+    }
+
+    // Filter by state (from API response)
     const state = details.address?.state;
-    if (!['TX', 'NM', 'CO'].includes(state)) continue;
+    if (!['TX', 'NM', 'CO'].includes(state)) {
+      excluded.wrongState++;
+      continue;
+    }
 
     // Find matching location
     const location = rawLocations.find(loc => loc.uuid === uuid);
@@ -110,6 +133,12 @@ function processStations() {
 
     // Exclude destination chargers
     if (chargerType === 'destination') {
+      excluded.destination++;
+      continue;
+    }
+
+    // Only include NACS and party chargers (exclude regular superchargers)
+    if (chargerType !== 'nacs' && chargerType !== 'party') {
       excluded.destination++;
       continue;
     }
@@ -180,11 +209,14 @@ function processStations() {
   // Save processed data
   fs.writeFileSync('./data/map-stations.json', JSON.stringify(processedStations, null, 2));
 
-  console.log(`✓ Processed ${processedStations.length} stations\n`);
+  console.log('═'.repeat(50));
+  console.log(`✅ Processed ${processedStations.length} stations\n`);
   console.log('Excluded:');
   console.log(`  Tesla-only: ${excluded.teslaOnly}`);
   console.log(`  Coming soon: ${excluded.comingSoon}`);
   console.log(`  Destination chargers: ${excluded.destination}`);
+  console.log(`  Wrong state: ${excluded.wrongState}`);
+  console.log(`  Invalid/failed data: ${excluded.invalidData}`);
   console.log(`  No location data: ${excluded.noDetails}\n`);
 
   console.log('Station types:');
@@ -241,7 +273,9 @@ function processStations() {
     console.log(`  ⚠ ${noCongestion} stations missing congestion data`);
   }
 
-  console.log(`\n✓ Saved to data/map-stations.json`);
+  console.log('═'.repeat(50));
+  console.log(`\n✓ Saved to: data/map-stations.json`);
+  console.log('✓ Ready to serve on map\n');
 }
 
 try {

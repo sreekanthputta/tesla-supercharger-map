@@ -216,7 +216,7 @@
       border-radius: 12px;
       padding: 0;
       overflow: hidden;
-      min-width: 320px;
+      width: 380px;
     }
 
     .leaflet-popup-content {
@@ -227,7 +227,7 @@
     .popup-header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 16px;
+      padding: 12px 16px;
     }
 
     .popup-title {
@@ -242,14 +242,14 @@
     }
 
     .popup-body {
-      padding: 16px;
+      padding: 12px 16px;
     }
 
     .info-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       font-size: 13px;
     }
 
@@ -286,17 +286,88 @@
       gap: 4px;
     }
 
+    .vehicle-tag {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+
+    .vehicle-tag.tesla {
+      background: #ff3b3010;
+      color: #ff3b30;
+      border: 1px solid #ff3b3030;
+    }
+
+    .vehicle-tag.nacs {
+      background: #5856d610;
+      color: #5856d6;
+      border: 1px solid #5856d630;
+    }
+
+    .vehicle-tag.other-ev {
+      background: #34c75910;
+      color: #34c759;
+      border: 1px solid #34c75930;
+    }
+
+    .compact-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: #333;
+      line-height: 1.6;
+    }
+
+    .compact-info span {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .emoji-tooltip {
+      position: relative;
+      cursor: help;
+    }
+
+    .emoji-tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 4px 8px;
+      background: rgba(0,0,0,0.9);
+      color: white;
+      font-size: 11px;
+      border-radius: 4px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      margin-bottom: 4px;
+      z-index: 1000;
+    }
+
+    .emoji-tooltip:hover::after {
+      opacity: 1;
+    }
+
     /* Pricing section */
     .pricing-section {
-      margin-top: 16px;
-      padding-top: 16px;
+      margin-top: 12px;
+      padding-top: 12px;
       border-top: 1px solid #e0e0e0;
     }
 
     .pricing-header {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       color: #333;
       display: flex;
       align-items: center;
@@ -380,10 +451,10 @@
     }
 
     .congestion-fee {
-      font-size: 12px;
+      font-size: 11px;
       color: #666;
-      margin-top: 8px;
-      padding: 8px 12px;
+      margin-bottom: 8px;
+      padding: 6px 10px;
       background: #fff9e6;
       border-radius: 4px;
       border-left: 3px solid #ffc107;
@@ -399,7 +470,7 @@
       text-transform: uppercase;
       font-weight: 600;
       color: #666;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -407,8 +478,8 @@
 
     .chart-container {
       position: relative;
-      height: 120px;
-      margin-bottom: 32px;
+      height: 60px;
+      margin-bottom: 24px;
     }
 
     .chart-background {

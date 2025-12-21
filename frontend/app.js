@@ -89,8 +89,33 @@ function createPricingTable(pricing) {
 
 // Create unified congestion chart with pricing partitions
 function createCongestionChart(congestionData, pricing) {
-  if (!congestionData || congestionData.length === 0) {
+  const tesla = pricing.tesla || [];
+  const nonTesla = pricing.nonTesla || [];
+
+  // If no pricing data at all, return empty
+  if (tesla.length === 0 && nonTesla.length === 0) {
     return '';
+  }
+
+  // If no congestion data, show pricing only
+  if (!congestionData || congestionData.length === 0) {
+    return `
+      <div class="congestion-chart">
+        ${tesla.length > 0 ? `
+          <div class="chart-title" style="color: #e31937; margin-bottom: 4px;">🔴 TESLA HOURLY PRICING</div>
+          <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            ${tesla.map(tier => `<div style="flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: #f5f5f5; padding: 8px 4px;">$${tier.rate.toFixed(2)}</div>`).join('')}
+          </div>
+        ` : ''}
+
+        ${nonTesla.length > 0 ? `
+          <div class="chart-title" style="color: #5856d6; margin-top: ${tesla.length > 0 ? '8px' : '0'}; margin-bottom: 4px;">🟣 NON-TESLA HOURLY PRICING</div>
+          <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+            ${nonTesla.map(tier => `<div style="flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: #f5f5f5; padding: 8px 4px;">$${tier.rate.toFixed(2)}</div>`).join('')}
+          </div>
+        ` : ''}
+      </div>
+    `;
   }
 
   // Rotate data to start at 4am
@@ -99,9 +124,6 @@ function createCongestionChart(congestionData, pricing) {
   const now = new Date().getHours();
   // Adjust current hour for 4am start
   const adjustedCurrentHour = now >= 4 ? now - 4 : now + 20;
-
-  const tesla = pricing.tesla || [];
-  const nonTesla = pricing.nonTesla || [];
 
   // Build hourly pricing map (original hours, not rotated yet)
   const hourlyPricing = new Array(24).fill(null);
@@ -288,80 +310,42 @@ function createCongestionChart(congestionData, pricing) {
 
 // Create popup content
 function createPopupContent(station) {
-  const amenitiesHtml = station.amenities.map(a =>
-    `<span class="amenity-badge">${a.emoji} ${a.name}</span>`
-  ).join('');
-
-  const chargerTypeLabel = {
-    'nacs': 'NACS Supercharger',
-    'party': 'Party Supercharger',
-    'supercharger': 'Supercharger'
-  }[station.chargerType] || station.chargerType;
-
   const congestionFeeHtml = station.pricing.congestion
     ? `<div class="congestion-fee">⚠️ Congestion fees (up to) $${station.pricing.congestion.rate.toFixed(2)}/${station.pricing.congestion.unit}</div>`
     : '';
 
+  // Create vehicle support tags
+  const vehicleTags = [];
+  if (station.vehicleSupport.tesla) vehicleTags.push('<span class="vehicle-tag tesla">Tesla</span>');
+  if (station.vehicleSupport.nacs) vehicleTags.push('<span class="vehicle-tag nacs">NACS</span>');
+  if (station.vehicleSupport.otherEv) vehicleTags.push('<span class="vehicle-tag other-ev">Other EVs</span>');
+
+  // Create amenity emojis
+  const amenitiesEmojis = station.amenities.map(a => a.emoji).join(' ');
+
   return `
-    <div class="popup-header">
-      <div class="popup-title">${station.name}</div>
-      ${station.commonName ? `<div class="popup-common-name">📍 ${station.commonName}</div>` : ''}
-    </div>
-    <div class="popup-body">
-      <div class="info-row">
-        <span class="info-row-icon">📍</span>
-        <span class="info-value">${station.address.full}</span>
+    <div class="popup-body" style="padding: 16px;">
+      <div style="margin-bottom: 4px; font-size: 18px; font-weight: 600; color: #333;">
+        ${station.name}
+      </div>
+      ${station.commonName ? `<div style="margin-bottom: 12px; font-size: 13px; color: #667eea;">📍 ${station.commonName}</div>` : ''}
+
+      <div style="margin-bottom: 12px; font-size: 13px; color: #666;">
+        ${station.address.full}
       </div>
 
-      <div class="info-row">
-        <span class="info-row-icon">⚡</span>
-        <span class="info-label">Charging Speed:</span>
-        <span class="info-value">${station.maxPowerKw}kW</span>
+      <div style="font-size: 15px; line-height: 1.8; color: #333; margin-bottom: 10px;">
+        🔌 ${station.stallCount} • 🕐 ${station.accessHours} • ⚡ ${station.maxPowerKw}kW • 🔓 ${station.accessType}
       </div>
 
-      <div class="info-row">
-        <span class="info-row-icon">🔌</span>
-        <span class="info-label">Stalls:</span>
-        <span class="info-value">${station.stallCount}</span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-row-icon">🏷️</span>
-        <span class="info-label">Type:</span>
-        <span class="info-value">${chargerTypeLabel}</span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-row-icon">🕐</span>
-        <span class="info-label">Hours:</span>
-        <span class="info-value">${station.accessHours}</span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-row-icon">🔓</span>
-        <span class="info-label">Access:</span>
-        <span class="info-value">${station.accessType}</span>
-      </div>
-
-      <div class="info-row">
-        <span class="info-row-icon">🚗</span>
-        <span class="info-label">Supports:</span>
-        <span class="info-value">
-          ${station.vehicleSupport.tesla ? 'Tesla' : ''}
-          ${station.vehicleSupport.nacs ? ' • NACS' : ''}
-          ${station.vehicleSupport.otherEv ? ' • Other EVs' : ''}
-        </span>
-      </div>
-
-      ${amenitiesHtml ? `
-        <div class="info-row" style="flex-direction: column; align-items: flex-start;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-            <span class="info-row-icon">✨</span>
-            <span class="info-label">Amenities:</span>
-          </div>
-          <div class="amenities-row">${amenitiesHtml}</div>
+      <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+        <div style="font-size: 18px; color: #666;">
+          ${amenitiesEmojis || ''}
         </div>
-      ` : ''}
+        <div>
+          ${vehicleTags.join('')}
+        </div>
+      </div>
 
       <div class="pricing-section">
         ${congestionFeeHtml}
@@ -542,8 +526,8 @@ function filterStations() {
     // Pricing type filter
     if (filters.pricingTypes.length > 0) {
       const allPrices = [...station.pricing.tesla, ...station.pricing.nonTesla];
-      const hasPeakPricing = allPrices.length > 1; // Multiple tiers = peak pricing
-      const hasFlatRate = allPrices.length === 1; // Single tier = flat rate
+      const hasPeakPricing = allPrices.some(tier => tier.isTou === true);
+      const hasFlatRate = allPrices.every(tier => tier.isTou === false);
 
       const matches = filters.pricingTypes.some(type => {
         if (type === 'peak') return hasPeakPricing;
