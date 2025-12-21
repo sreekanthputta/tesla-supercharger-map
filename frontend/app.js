@@ -659,7 +659,7 @@ function renderSearchResults() {
 // Load stations
 async function loadStations() {
   try {
-    const response = await fetch('/data/map-stations.json');
+    const response = await fetch('./data/map-stations.json');
     allStations = await response.json();
 
     document.getElementById('total-count').textContent = allStations.length;

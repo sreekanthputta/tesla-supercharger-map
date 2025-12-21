@@ -15,24 +15,40 @@ An interactive map application for finding Tesla Supercharger stations in New Me
 - **Real-time Data**: Scraped directly from Tesla's API
 - **Multi-threaded Scraping**: Fast parallel data fetching
 
+## Live Demo
+
+View the live application: **[Tesla Supercharger Map](https://sreekanthputta.github.io/tesla-supercharger-map/)**
+
+The map is automatically deployed via GitHub Actions whenever changes are pushed to the main branch.
+
+## Deployment
+
+- **URL**: https://sreekanthputta.github.io/tesla-supercharger-map/
+- **Source**: `frontend/` directory deployed as static site
+- **Method**: Automated via GitHub Actions on push to main
+- **Update Data**: Copy updated `map-stations.json` from backend/data/ to frontend/data/, commit, and push
+
 ## Project Structure
 
 ```
 tesla-supercharger-map/
+├── .github/
+│   └── workflows/
+│       └── deploy.yml           # GitHub Actions deployment
 ├── backend/
-│   ├── scraper.js       # Multi-threaded data scraper
-│   ├── database.js      # SQLite database setup
-│   ├── server.js        # Express API server
+│   ├── data/
+│   │   ├── map-stations.json   # Processed data (522KB)
+│   │   └── raw-*.json          # Raw data (excluded from deployment)
+│   ├── scraping/                # Data collection scripts
+│   ├── server-simple.js         # Local dev server
 │   └── package.json
-├── frontend/
-│   ├── index.html       # Main HTML file
-│   ├── style.css        # Styling
-│   ├── app.js           # Frontend logic
-│   ├── vite.config.js   # Vite configuration
-│   └── package.json
-└── data/
-    ├── stations.json    # Raw scraped data
-    └── stations.db      # SQLite database
+├── frontend/                    # Deployed to GitHub Pages
+│   ├── index.html
+│   ├── app.js
+│   ├── data/
+│   │   └── map-stations.json   # Station data
+│   └── .nojekyll
+└── README.md
 ```
 
 ## Installation

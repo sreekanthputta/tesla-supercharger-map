@@ -3,9 +3,9 @@ node_modules/
 package-lock.json
 
 # Data files
-data/
+backend/data/raw-*.json
+backend/data/stations-to-fetch.json
 *.db
-*.json
 
 # Logs
 *.log
