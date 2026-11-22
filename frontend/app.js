@@ -5,8 +5,8 @@ let markers = [];
 
 // Initialize map
 function initMap() {
-  // Center on Texas/NM/CO region
-  map = L.map('map').setView([33.5, -103], 6);
+  // Center on the TX/NM/CO/CA span
+  map = L.map('map').setView([35.5, -112], 5);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '© OpenStreetMap contributors',
@@ -90,6 +90,22 @@ function createPricingTable(pricing) {
   `;
 }
 
+// Human-readable price summary for one vehicle type.
+// Pricing is a uniform list of time windows; >1 window means the price varies through the day
+// (occupancy-derived windows are approximate, flagged as such).
+function priceSummary(tiers) {
+  if (!tiers || tiers.length === 0) return 'N/A';
+  const rates = tiers.map(t => t.rate);
+  const min = Math.min(...rates), max = Math.max(...rates);
+  if (max === 0) return '<span class="badge-free">🆓 FREE</span>';
+  const range = min === max ? `$${min.toFixed(2)}/kWh` : `$${min.toFixed(2)}–$${max.toFixed(2)}/kWh`;
+  if (tiers.length > 1) {
+    const note = tiers.some(t => t.occupancyDerived) ? '(approx. by typical busyness)' : '(by time of day)';
+    return `${range} <span style="color:#999;">${note}</span>`;
+  }
+  return range;
+}
+
 // Create unified congestion chart with pricing partitions
 function createCongestionChart(congestionData, pricing) {
   const tesla = pricing.tesla || [];
@@ -100,19 +116,27 @@ function createCongestionChart(congestionData, pricing) {
     return '';
   }
 
+  // The hourly chart only makes sense when price actually varies through the day (>1 window).
+  // A single full-day window (flat, free, or occupancy that stayed in one band today) needs no chart.
+  const teslaIsTou = tesla.length > 1;
+  const nonTeslaIsTou = nonTesla.length > 1;
+  if (!teslaIsTou && !nonTeslaIsTou) {
+    return '';
+  }
+
   // If no congestion data, show pricing only
   if (!congestionData || congestionData.length === 0) {
     return `
       <div class="congestion-chart">
-        ${tesla.length > 0 ? `
+        ${teslaIsTou ? `
           <div class="chart-title" style="color: #e31937; margin-bottom: 4px;">🔴 TESLA HOURLY PRICING</div>
           <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
             ${tesla.map(tier => `<div style="flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: #f5f5f5; padding: 8px 4px;">$${tier.rate.toFixed(2)}</div>`).join('')}
           </div>
         ` : ''}
 
-        ${nonTesla.length > 0 ? `
-          <div class="chart-title" style="color: #5856d6; margin-top: ${tesla.length > 0 ? '8px' : '0'}; margin-bottom: 4px;">🟣 NON-TESLA HOURLY PRICING</div>
+        ${nonTeslaIsTou ? `
+          <div class="chart-title" style="color: #5856d6; margin-top: ${teslaIsTou ? '8px' : '0'}; margin-bottom: 4px;">🟣 NON-TESLA HOURLY PRICING</div>
           <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
             ${nonTesla.map(tier => `<div style="flex: 1; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: #f5f5f5; padding: 8px 4px;">$${tier.rate.toFixed(2)}</div>`).join('')}
           </div>
@@ -130,7 +154,7 @@ function createCongestionChart(congestionData, pricing) {
 
   // Build hourly pricing map (original hours, not rotated yet)
   const hourlyPricing = new Array(24).fill(null);
-  tesla.forEach(tier => {
+  if (teslaIsTou) tesla.forEach(tier => {
     let startHour = parseInt(tier.startTime.split(':')[0]);
     let endHour = parseInt(tier.endTime.split(':')[0]);
     if (endHour === 0) endHour = 24;
@@ -148,111 +172,70 @@ function createCongestionChart(congestionData, pricing) {
   const maxPrice = Math.max(...validPrices);
   const midPrice = (minPrice + maxPrice) / 2;
 
-  // Create price labels row (Tesla) - adjusted for 4am start
-  let teslaPriceLabels = '';
-  let nonTeslaPriceLabels = '';
-
-  // Group consecutive hours with same price
-  const teslaPriceGroups = [];
-  let currentGroup = null;
-
-  for (let i = 0; i < 24; i++) {
-    const price = rotatedHourlyPricing[i];
-    if (currentGroup && currentGroup.price === price) {
-      currentGroup.count++;
-    } else {
-      if (currentGroup) teslaPriceGroups.push(currentGroup);
-      currentGroup = { price, count: 1 };
+  // Group 24 hourly prices into consecutive same-price tiers.
+  const groupByHour = hourly => {
+    const groups = [];
+    let cur = null;
+    for (let i = 0; i < 24; i++) {
+      const price = hourly[i];
+      if (cur && cur.price === price) cur.count++;
+      else { if (cur) groups.push(cur); cur = { price, count: 1 }; }
     }
-  }
-  if (currentGroup) teslaPriceGroups.push(currentGroup);
+    if (cur) groups.push(cur);
+    return groups;
+  };
 
-  teslaPriceGroups.forEach((group, index) => {
-    if (group.price === null) return; // Skip null prices
+  // Render a price row: one block per tier, width ∝ hours (flex: count) so it lines
+  // up with the 24 hourly bars below. The container's gap is the only separator, so
+  // merged hours sit flush and only different tiers show a gap. A single-hour tier is
+  // ~1/24 wide, so shrink its font to keep the price readable inside the block.
+  // Render a price row: one block per tier, sized to the exact pixels its bars span.
+  // The bar grid is 24 columns with 23 internal 1px gaps, so one bar = (100% - 23px)/24.
+  // A tier covering `count` hours spans `count` bars + its `count-1` internal gaps; the
+  // container's own 1px gap then separates tiers, matching the bar gaps exactly.
+  // min-width:0 lets a block shrink to that width instead of its text width. A 1-hour
+  // tier is only ~13px wide — too narrow for "$0.49" — so sub-dollar rates render as cents.
+  const barSpan = count => `calc(${count} * (100% - 23px) / 24 + ${count - 1}px)`;
+  const fmtPrice = (price, count) => {
+    if (count === 1 && price > 0 && price < 1) return `${Math.round(price * 100)}¢`;
+    return `$${price.toFixed(2)}`;
+  };
+  const renderPriceRow = (groups, mid) => groups
+    .filter(g => g.price !== null)
+    .map(g => {
+      const bg = g.price >= mid ? '#e8e8e8' : '#f5f5f5';
+      const fontSize = g.count === 1 ? 7 : g.count === 2 ? 9 : 12;
+      const padX = g.count <= 2 ? 0 : 4;
+      return `<div style="flex: 0 0 ${barSpan(g.count)}; box-sizing: border-box; min-width: 0; overflow: hidden; text-align: center; font-size: ${fontSize}px; font-weight: 600; color: #1a1a1a; background: ${bg}; padding: 8px ${padX}px; white-space: nowrap;">${fmtPrice(g.price, g.count)}</div>`;
+    })
+    .join('');
 
-    const widthPercent = (group.count / 24) * 100;
-    const isPeak = group.price >= midPrice;
-    const bgColor = isPeak ? '#e8e8e8' : '#f5f5f5';
-    const borderRight = index < teslaPriceGroups.length - 1 ? 'border-right: 2px solid #fff;' : '';
+  const teslaPriceGroups = groupByHour(rotatedHourlyPricing);
+  const teslaPriceLabels = renderPriceRow(teslaPriceGroups, midPrice);
 
-    teslaPriceLabels += `
-      <div style="flex: 0 0 ${widthPercent}%; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: ${bgColor}; padding: 8px 4px; ${borderRight}">
-        $${group.price.toFixed(2)}
-      </div>
-    `;
-  });
-
-  // Create price labels row (Non-Tesla) - adjusted for 4am start
-  // Build hourly pricing map for non-Tesla
+  // Non-Tesla price row
   const hourlyPricingNonTesla = new Array(24).fill(null);
-  nonTesla.forEach(tier => {
+  if (nonTeslaIsTou) nonTesla.forEach(tier => {
     let startHour = parseInt(tier.startTime.split(':')[0]);
     let endHour = parseInt(tier.endTime.split(':')[0]);
     if (endHour === 0) endHour = 24;
-    for (let hour = startHour; hour < endHour; hour++) {
-      hourlyPricingNonTesla[hour] = tier.rate;
-    }
+    for (let hour = startHour; hour < endHour; hour++) hourlyPricingNonTesla[hour] = tier.rate;
   });
-
-  // Rotate non-Tesla pricing to start at 4am
   const rotatedHourlyPricingNonTesla = [...hourlyPricingNonTesla.slice(4), ...hourlyPricingNonTesla.slice(0, 4)];
-
-  // Determine min/max for non-Tesla
   const nonTeslaPrices = nonTesla.map(t => t.rate);
-  const minNonTesla = nonTeslaPrices.length > 0 ? Math.min(...nonTeslaPrices) : 0;
-  const maxNonTesla = nonTeslaPrices.length > 0 ? Math.max(...nonTeslaPrices) : 0;
-  const midNonTesla = (minNonTesla + maxNonTesla) / 2;
+  const midNonTesla = nonTeslaPrices.length > 0 ? (Math.min(...nonTeslaPrices) + Math.max(...nonTeslaPrices)) / 2 : 0;
+  const nonTeslaPriceLabels = renderPriceRow(groupByHour(rotatedHourlyPricingNonTesla), midNonTesla);
 
-  // Group consecutive hours with same price for non-Tesla
-  const nonTeslaPriceGroups = [];
-  let currentNonTeslaGroup = null;
-
-  for (let i = 0; i < 24; i++) {
-    const price = rotatedHourlyPricingNonTesla[i];
-    if (currentNonTeslaGroup && currentNonTeslaGroup.price === price) {
-      currentNonTeslaGroup.count++;
-    } else {
-      if (currentNonTeslaGroup) nonTeslaPriceGroups.push(currentNonTeslaGroup);
-      currentNonTeslaGroup = { price, count: 1 };
-    }
-  }
-  if (currentNonTeslaGroup) nonTeslaPriceGroups.push(currentNonTeslaGroup);
-
-  nonTeslaPriceGroups.forEach((group, index) => {
-    if (group.price === null) return; // Skip null prices
-
-    const widthPercent = (group.count / 24) * 100;
-    const isPeak = group.price >= midNonTesla;
-    const bgColor = isPeak ? '#e8e8e8' : '#f5f5f5';
-    const borderRight = index < nonTeslaPriceGroups.length - 1 ? 'border-right: 2px solid #fff;' : '';
-
-    nonTeslaPriceLabels += `
-      <div style="flex: 0 0 ${widthPercent}%; text-align: center; font-size: 12px; font-weight: 600; color: #1a1a1a; background: ${bgColor}; padding: 8px 4px; ${borderRight}">
-        $${group.price.toFixed(2)}
-      </div>
-    `;
-  });
-
-  // Create background partitions for pricing windows
+  // Background partitions behind the bars, aligned to the same 24-hour grid.
   let backgroundHtml = '';
-
-  // Filter out null groups first to get proper indexing for margins
   const validTeslaPriceGroups = teslaPriceGroups.filter(g => g.price !== null);
   const numPartitions = validTeslaPriceGroups.length;
-  const gapSize = 2; // 2px gap between partitions
-  const totalGaps = (numPartitions - 1) * gapSize; // Total gap width in px
-
   validTeslaPriceGroups.forEach((group, index) => {
-    const widthPercent = (group.count / 24) * 100;
     const isPeak = group.price >= midPrice;
     const bgColor = isPeak ? 'rgba(139, 92, 246, 0.08)' : 'rgba(196, 181, 253, 0.08)';
-    const marginRight = index < numPartitions - 1 ? `${gapSize}px` : '0';
-
-    // Adjust width to account for gaps: each partition loses its proportional share of total gap space
-    const gapAdjustment = (totalGaps / numPartitions);
-
+    const marginRight = index < numPartitions - 1 ? '1px' : '0';
     backgroundHtml += `
-      <div style="flex: 0 0 calc(${widthPercent}% - ${gapAdjustment}px); background: ${bgColor}; margin-right: ${marginRight};"></div>
+      <div style="flex: 0 0 ${barSpan(group.count)}; box-sizing: border-box; background: ${bgColor}; margin-right: ${marginRight};"></div>
     `;
   });
 
@@ -285,16 +268,16 @@ function createCongestionChart(congestionData, pricing) {
 
   return `
     <div class="congestion-chart">
-      ${tesla.length > 0 ? `
+      ${teslaIsTou ? `
         <div class="chart-title" style="color: #e31937; margin-bottom: 4px;">🔴 TESLA HOURLY PRICING</div>
-        <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+        <div style="display: flex; gap: 1px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
           ${teslaPriceLabels}
         </div>
       ` : ''}
 
-      ${nonTesla.length > 0 ? `
-        <div class="chart-title" style="color: #5856d6; margin-top: ${tesla.length > 0 ? '8px' : '0'}; margin-bottom: 4px;">🟣 NON-TESLA HOURLY PRICING</div>
-        <div style="display: flex; gap: 2px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+      ${nonTeslaIsTou ? `
+        <div class="chart-title" style="color: #5856d6; margin-top: ${teslaIsTou ? '8px' : '0'}; margin-bottom: 4px;">🟣 NON-TESLA HOURLY PRICING</div>
+        <div style="display: flex; gap: 1px; margin-bottom: 16px; overflow: hidden; border-radius: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
           ${nonTeslaPriceLabels}
         </div>
       ` : ''}
@@ -346,14 +329,24 @@ function createPopupContent(station) {
     speedLabel += ' (Level 2)';
   }
 
-  // Format pricing with FREE support
-  const teslaPricing = station.pricing.tesla && station.pricing.tesla[0]
-    ? (station.pricing.tesla[0].isFree ? '<span class="badge-free">🆓 FREE</span>' : `$${station.pricing.tesla[0].rate.toFixed(2)}/kWh`)
-    : 'N/A';
+  // Format pricing: handles time-of-use, occupancy-based, flat, and FREE
+  const teslaPricing = priceSummary(station.pricing.tesla);
+  const nonTeslaPricing = priceSummary(station.pricing.nonTesla);
 
-  const nonTeslaPricing = station.pricing.nonTesla && station.pricing.nonTesla[0]
-    ? (station.pricing.nonTesla[0].isFree ? '<span class="badge-free">🆓 FREE</span>' : `$${station.pricing.nonTesla[0].rate.toFixed(2)}/kWh`)
-    : 'N/A';
+  // Underlying site-busyness ladder the time windows are projected from, with the
+  // occupancy % translated into charger counts (floor of stalls × band edge).
+  const bands = station.pricing.occupancyBands;
+  const stalls = station.stallCount || 0;
+  const chargersAt = pct => Math.floor(stalls * pct / 100);
+  const busynessTiersHtml = bands ? `
+    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid #eee; font-size: 12px; color: #666;">
+      <strong style="color:#e31937;">Busyness tiers:</strong>
+      ${bands.map(b => {
+        const chargers = b.min === 0 ? `&lt;${chargersAt(b.max)}` : `${chargersAt(b.min)}–${chargersAt(b.max)}`;
+        return `<span style="white-space:nowrap;">&lt;${b.max}% (${chargers}) <strong>$${b.rate.toFixed(2)}</strong></span>`;
+      }).join(' · ')}
+    </div>
+  ` : '';
 
   return `
     <div class="popup-body" style="padding: 16px;">
@@ -387,6 +380,7 @@ function createPopupContent(station) {
         <div style="margin-bottom: 12px; padding: 10px; background: #f9f9f9; border-radius: 8px; font-size: 13px;">
           <div style="margin-bottom: 4px;"><strong>Tesla:</strong> ${teslaPricing}</div>
           <div><strong>Non-Tesla:</strong> ${nonTeslaPricing}</div>
+          ${busynessTiersHtml}
         </div>
       ` : ''}
 

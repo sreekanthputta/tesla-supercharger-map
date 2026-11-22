@@ -6,11 +6,12 @@ import fs from 'fs';
  * Excludes: Tesla-only, coming_soon, destination chargers
  */
 
-// Geographic boundaries for TX, NM, CO
+// Geographic boundaries for TX, NM, CO, CA
 const GEO_BOUNDS = {
   TX: { latMin: 25.8, latMax: 36.5, lonMin: -106.6, lonMax: -93.5 },
   NM: { latMin: 31.3, latMax: 37, lonMin: -109, lonMax: -103 },
-  CO: { latMin: 37, latMax: 41, lonMin: -109, lonMax: -102 }
+  CO: { latMin: 37, latMax: 41, lonMin: -109, lonMax: -102 },
+  CA: { latMin: 32.5, latMax: 42, lonMin: -124.4, lonMax: -114.1 }
 };
 
 function isInRegion(lat, lon) {
@@ -20,59 +21,90 @@ function isInRegion(lat, lon) {
   );
 }
 
-function parsePricing(effectivePricebooks) {
+function hourLabel(n) { return String(n).padStart(2, '0') + ':00'; }
+
+// Occupancy pricing varies by how full the site is. Project it onto the day's hourly
+// congestion curve so it becomes ordinary time-of-use pricing: each hour's congestion %
+// selects the matching band's rate. Approximate by design — based on typical busyness.
+function projectOccupancy(bands, congestion) {
+  const rateAt = occ => {
+    for (const b of bands) if (occ >= b.min && (occ < b.max || b.max === 100)) return b.rate;
+    return bands[bands.length - 1].rate;
+  };
+  const hourly = congestion.map(v => rateAt(v * 100));
+  const windows = [];
+  let start = 0;
+  for (let h = 1; h <= 24; h++) {
+    if (h === 24 || hourly[h] !== hourly[start]) {
+      windows.push({
+        rate: hourly[start],
+        startTime: hourLabel(start),
+        endTime: h === 24 ? '24:00' : hourLabel(h),
+        isTou: true,
+        occupancyDerived: true
+      });
+      start = h;
+    }
+  }
+  return windows;
+}
+
+// Build one vehicle type's pricing as a uniform {rate, startTime, endTime, isTou} list.
+// Three source models collapse to this shape: occupancy (projected onto congestion),
+// time-of-use (used directly), and flat/free (one full-day window).
+// The null-occupancy fallback pricebook is ignored: if banded tiers are present, they apply.
+function buildTiers(books, congestion) {
+  if (books.length === 0) return [{ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false }];
+
+  const occ = books
+    .filter(pb => pb.minSiteOccupancy != null)
+    .map(pb => ({ min: pb.minSiteOccupancy, max: pb.maxSiteOccupancy, rate: pb.rateBase }))
+    .sort((a, b) => a.min - b.min);
+  if (occ.length > 0 && congestion && congestion.length === 24) {
+    return projectOccupancy(occ, congestion);
+  }
+
+  const tou = books.filter(pb => pb.startTime && pb.startTime !== '');
+  if (tou.length > 0) {
+    const seen = new Set();
+    return tou
+      .slice()
+      .sort((a, b) => (a.startTime || '').localeCompare(b.startTime || ''))
+      .filter(pb => {
+        const key = `${pb.startTime}|${pb.endTime}|${pb.rateBase}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      })
+      .map(pb => ({ rate: pb.rateBase, startTime: pb.startTime, endTime: pb.endTime || '24:00', isTou: true }));
+  }
+
+  const rate = Math.max(...books.map(pb => pb.rateBase));
+  return [{ rate, startTime: '00:00', endTime: '24:00', isTou: false }];
+}
+
+function parsePricing(effectivePricebooks, congestion) {
   if (!effectivePricebooks || effectivePricebooks.length === 0) {
-    // No pricing data = FREE
-    return {
-      tesla: [{ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true }],
-      nonTesla: [{ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true }],
-      congestion: null
-    };
+    const free = { rate: 0, startTime: '00:00', endTime: '24:00', isTou: false };
+    return { tesla: [{ ...free }], nonTesla: [{ ...free }], congestion: null, occupancyBands: null };
   }
 
   const charging = effectivePricebooks.filter(pb => pb.feeType === 'CHARGING');
-  const congestion = effectivePricebooks.find(pb => pb.feeType === 'CONGESTION');
+  const congestionFee = effectivePricebooks.find(pb => pb.feeType === 'CONGESTION');
+  const teslaCharging = charging.filter(pb => pb.vehicleMakeType === 'TSLA');
 
-  // Include both Time-of-Use and flat-rate pricing
-  const teslaPricing = charging
-    .filter(pb => pb.vehicleMakeType === 'TSLA')
-    .map(pb => ({
-      rate: pb.rateBase,
-      startTime: pb.startTime || '00:00',
-      endTime: pb.endTime || '24:00',
-      isTou: pb.isTou,
-      isFree: pb.rateBase === 0
-    }))
-    .sort((a, b) => a.startTime.localeCompare(b.startTime));
-
-  const nonTeslaPricing = charging
-    .filter(pb => pb.vehicleMakeType === 'NTSLA')
-    .map(pb => ({
-      rate: pb.rateBase,
-      startTime: pb.startTime || '00:00',
-      endTime: pb.endTime || '24:00',
-      isTou: pb.isTou,
-      isFree: pb.rateBase === 0
-    }))
-    .sort((a, b) => a.startTime.localeCompare(b.startTime));
-
-  // If no Tesla pricing found, assume free
-  if (teslaPricing.length === 0) {
-    teslaPricing.push({ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true });
-  }
-
-  // If no non-Tesla pricing found, assume free
-  if (nonTeslaPricing.length === 0) {
-    nonTeslaPricing.push({ rate: 0, startTime: '00:00', endTime: '24:00', isTou: false, isFree: true });
-  }
+  // The raw occupancy ladder (site-busyness % → rate) that the time windows are
+  // projected from. Tesla-only; null when the site isn't occupancy-priced.
+  const occupancyBands = teslaCharging
+    .filter(pb => pb.minSiteOccupancy != null)
+    .map(pb => ({ min: pb.minSiteOccupancy, max: pb.maxSiteOccupancy, rate: pb.rateBase }))
+    .sort((a, b) => a.min - b.min);
 
   return {
-    tesla: teslaPricing,
-    nonTesla: nonTeslaPricing,
-    congestion: congestion ? {
-      rate: congestion.rateBase,
-      unit: congestion.uom
-    } : null
+    tesla: buildTiers(teslaCharging, congestion),
+    nonTesla: buildTiers(charging.filter(pb => pb.vehicleMakeType === 'NTSLA'), congestion),
+    congestion: congestionFee ? { rate: congestionFee.rateBase, unit: congestionFee.uom } : null,
+    occupancyBands: occupancyBands.length > 0 ? occupancyBands : null
   };
 }
 
@@ -137,7 +169,7 @@ function processStations() {
 
     // Filter by state (from API response)
     const state = details.address?.state;
-    if (!['TX', 'NM', 'CO'].includes(state)) {
+    if (!['TX', 'NM', 'CO', 'CA'].includes(state)) {
       excluded.wrongState++;
       continue;
     }
@@ -172,14 +204,28 @@ function processStations() {
       continue;
     }
 
-    // Parse pricing
-    const pricing = parsePricing(details.effectivePricebooks);
-
-    // Get current day congestion data (may be null for destination chargers)
+    // Get current day congestion data (may be null for destination chargers).
+    // congestionValue is UTC-indexed; local hour L maps to UTC hour L+shift, which
+    // rolls into the next UTC day once it passes 24. Stitch currentDay + nextDay so
+    // the stored array is a true local day (local midnight at index 0).
+    const TZ_SHIFT = { CA: 8, TX: 6, CO: 7, NM: 7 };
     const now = new Date();
     const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     const currentDay = dayNames[now.getDay()];
-    const congestionData = details.availabilityProfile?.availabilityProfile?.[currentDay]?.congestionValue || [];
+    const nextDay = dayNames[(now.getDay() + 1) % 7];
+    const profile = details.availabilityProfile?.availabilityProfile;
+    const congToday = profile?.[currentDay]?.congestionValue || [];
+    const congNext = profile?.[nextDay]?.congestionValue || [];
+    const shift = TZ_SHIFT[state] ?? 0;
+    const congestionData = (congToday.length === 24 && congNext.length === 24)
+      ? Array.from({ length: 24 }, (_, L) => {
+          const idx = L + shift;
+          return idx < 24 ? congToday[idx] : congNext[idx - 24];
+        })
+      : congToday;
+
+    // Parse pricing (occupancy pricing is projected onto the day's congestion curve)
+    const pricing = parsePricing(details.effectivePricebooks, congestionData);
 
     // Determine vehicle compatibility
     const vehicleSupport = {
@@ -223,6 +269,12 @@ function processStations() {
       openToNonTeslas: details.openToNonTeslas,
       vehicleSupport: vehicleSupport
     };
+
+    // Print the projected occupancy split for this location
+    if (pricing.tesla.some(t => t.occupancyDerived)) {
+      const split = pricing.tesla.map(t => `${t.startTime}-${t.endTime} $${t.rate.toFixed(2)}`).join('  ');
+      console.log(`  ${details.name} (${state}): ${split}`);
+    }
 
     processedStations.push(station);
   }

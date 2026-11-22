@@ -9,7 +9,8 @@ export const CONFIG = {
   regions: {
     TX: { latMin: 25.8, latMax: 36.5, lonMin: -106.6, lonMax: -93.5 },
     NM: { latMin: 31.3, latMax: 37.0, lonMin: -109.0, lonMax: -103.0 },
-    CO: { latMin: 37.0, latMax: 41.0, lonMin: -109.0, lonMax: -102.0 }
+    CO: { latMin: 37.0, latMax: 41.0, lonMin: -109.0, lonMax: -102.0 },
+    CA: { latMin: 32.5, latMax: 42.0, lonMin: -124.4, lonMax: -114.1 }
   },
 
   // Charger types to include (location_type field)
